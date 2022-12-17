@@ -1184,6 +1184,15 @@
               "type": "string",
               "nullable": true
             }
+          },
+          {
+            "name": "notes",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "nullable": true
+            }
           }
         ],
         "responses": {
@@ -1470,6 +1479,15 @@
               "type": "number",
               "nullable": true
             }
+          },
+          {
+            "name": "notes",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "nullable": true
+            }
           }
         ],
         "responses": {
@@ -1547,6 +1565,102 @@
       }
     },
     "/api/seen/{seenId}": {
+      "put": {
+        "tags": [
+          "Seen"
+        ],
+        "operationId": "updateById",
+        "parameters": [
+          {
+            "name": "seenId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "number"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "notes": {
+                    "type": "string",
+                    "nullable": true
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "type": "number",
+                      "nullable": true
+                    },
+                    "date": {
+                      "type": "number",
+                      "nullable": true
+                    },
+                    "mediaItemId": {
+                      "type": "number",
+                      "nullable": true
+                    },
+                    "episodeId": {
+                      "type": "number",
+                      "nullable": true
+                    },
+                    "userId": {
+                      "type": "number",
+                      "nullable": true
+                    },
+                    "type": {
+                      "enum": [
+                        "progress",
+                        "seen",
+                        null
+                      ],
+                      "type": "string",
+                      "nullable": true
+                    },
+                    "progress": {
+                      "type": "number",
+                      "nullable": true
+                    },
+                    "duration": {
+                      "type": "number",
+                      "nullable": true
+                    },
+                    "action": {
+                      "enum": [
+                        "paused",
+                        "playing",
+                        null
+                      ],
+                      "type": "string",
+                      "nullable": true
+                    },
+                    "notes": {
+                      "type": "string",
+                      "nullable": true
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
       "delete": {
         "tags": [
           "Seen"
@@ -3255,6 +3369,10 @@
           },
           "duration": {
             "type": "number",
+            "nullable": true
+          },
+          "notes": {
+            "type": "string",
             "nullable": true
           }
         },

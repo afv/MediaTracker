@@ -52,6 +52,7 @@ export const SelectSeenDate: FunctionComponent<{
           episode: episode,
           date: args.date,
           seenAt: args.seenAt,
+          notes: args.notes,
         });
       }}
     />
@@ -62,13 +63,15 @@ export const SelectSeenDateComponent: FunctionComponent<{
   mediaItem: MediaItemItemsResponse;
   episode?: TvEpisode;
   closeModal?: () => void;
-  onSelected: (args?: { date?: Date; seenAt?: LastSeenAt }) => void;
+  onSelected: (args?: { date?: Date; seenAt?: LastSeenAt; notes?: string; }) => void;
 }> = (props) => {
   const { mediaItem, episode, onSelected, closeModal } = props;
   const dateInputRef = useRef<HTMLInputElement>(null);
   const timeInputRef = useRef<HTMLInputElement>(null);
 
   const todayDateString = format(new Date(), 'yyyy-MM-dd');
+
+  const [notes, setNotes] = useState('');
 
   return (
     <div className="p-2">
@@ -103,19 +106,19 @@ export const SelectSeenDateComponent: FunctionComponent<{
       <div className="flex flex-col">
         <div
           className="m-2 btn"
-          onClick={() => onSelected({ date: new Date() })}
+          onClick={() => onSelected({ date: new Date(), notes })}
         >
           <Trans>Now</Trans>
         </div>
         <div
           className="m-2 btn"
-          onClick={() => onSelected({ seenAt: 'release_date' })}
+          onClick={() => onSelected({ seenAt: 'release_date', notes })}
         >
           <Trans>At release date</Trans>
         </div>
         <div
           className="m-2 btn"
-          onClick={() => onSelected({ seenAt: 'unknown' })}
+          onClick={() => onSelected({ seenAt: 'unknown', notes })}
         >
           <Trans>I do not remember</Trans>
         </div>
@@ -135,6 +138,7 @@ export const SelectSeenDateComponent: FunctionComponent<{
                 Number(hours),
                 Number(minutes)
               ),
+              notes,
             });
           }}
         >
@@ -156,7 +160,20 @@ export const SelectSeenDateComponent: FunctionComponent<{
             <Trans>Select date</Trans>
           </button>
         </form>
-        <div className="m-2 btn-red" onClick={() => closeModal()}>
+        <form
+          className="m-2"
+        >
+          <textarea
+            className="w-full"
+            value={notes}
+            placeholder="Notes"
+            onChange={(e) => {
+              setNotes(e.currentTarget?.value);
+              e.currentTarget?.setCustomValidity('');
+            }}
+          />
+        </form>
+        <div className="m-2 mt-3 btn-red" onClick={() => closeModal()}>
           <Trans>Cancel</Trans>
         </div>
       </div>

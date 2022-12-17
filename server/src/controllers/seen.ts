@@ -32,6 +32,7 @@ export class SeenController {
       lastSeenAt?: LastSeenAt;
       date?: number;
       duration?: number;
+      notes?: string;
     };
   }>(async (req, res) => {
     const userId = Number(req.user);
@@ -43,6 +44,7 @@ export class SeenController {
       lastSeenAt,
       lastSeenEpisodeId,
       duration,
+      notes,
     } = req.query;
 
     let date = req.query.date ? new Date(req.query.date) : null;
@@ -133,6 +135,7 @@ export class SeenController {
               : date?.getTime() || null,
           duration:
             episode.runtime * 60 * 1000 || mediaItem.runtime * 60 * 1000,
+          notes: notes,
         }))
       );
     } else {
@@ -160,6 +163,7 @@ export class SeenController {
           mediaItemId: mediaItemId,
           episodeId: episodeId,
           date: date?.getTime() || null,
+          notes: notes,
         });
       } else if (seasonId) {
         const episodes = await tvEpisodeRepository.find({
@@ -182,6 +186,7 @@ export class SeenController {
                     : date?.getTime() || null,
                 duration:
                   episode.runtime * 60 * 1000 || mediaItem.runtime * 60 * 1000,
+                notes: notes,
               })
             )
         );
@@ -207,6 +212,7 @@ export class SeenController {
                   duration:
                     episode.runtime * 60 * 1000 ||
                     mediaItem.runtime * 60 * 1000,
+                  notes: notes,
                 })
               )
           );
@@ -217,6 +223,7 @@ export class SeenController {
             episodeId: null,
             date: date?.getTime() || null,
             duration: duration || null,
+            notes: notes,
           });
         }
       }
@@ -248,6 +255,7 @@ export class SeenController {
       seasonNumber?: number;
       episodeNumber?: number;
       duration?: number;
+      notes?: string;
     };
   }>(async (req, res) => {
     const userId = Number(req.user);
