@@ -5,6 +5,7 @@ export type Seen = {
   episodeId?: number;
   userId: number;
   duration?: number;
+  notes?: string | null;
 };
 
 export const seenColumns = <const>[
@@ -14,6 +15,7 @@ export const seenColumns = <const>[
   'episodeId',
   'userId',
   'duration',
+  'notes',
 ];
 
 export class SeenFilters {

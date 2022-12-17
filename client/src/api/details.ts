@@ -217,6 +217,7 @@ export const markAsSeen = async (args: {
   episode?: TvEpisode;
   seenAt?: LastSeenAt;
   date?: Date;
+  notes?: string;
 }) => {
   await mediaTrackerApi.seen.add({
     mediaItemId: args.mediaItem.id,
@@ -224,6 +225,7 @@ export const markAsSeen = async (args: {
     episodeId: args.episode?.id,
     lastSeenAt: args.seenAt,
     date: args.date?.getTime(),
+    notes: args.notes,
   });
 
   await updateMediaItem(args.mediaItem);

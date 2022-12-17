@@ -13,6 +13,7 @@ import {
   isVideoGame,
 } from 'src/utils';
 import { RemoveFromSeenHistoryButton } from 'src/components/AddAndRemoveFromSeenHistoryButton';
+import { EditNotesButton } from 'src/components/EditNotesButton';
 
 export const SeenHistoryPage: FunctionComponent = () => {
   const { mediaItemId } = useParams();
@@ -118,16 +119,33 @@ export const SeenHistoryPage: FunctionComponent = () => {
                       )}
                   </div>
 
-                  <div className="mt-1 mb-3">
-                    <RemoveFromSeenHistoryButton
-                      mediaItem={mediaItem}
-                      episode={
-                        (seenEntry.episodeId &&
-                          episodesMap[seenEntry.episodeId]) ||
-                        undefined
-                      }
-                      seenId={seenEntry.id}
-                    />
+                  {seenEntry.notes && (
+                  <div>
+                    <strong>Notes:</strong>
+                    <div className="ml-4">
+                      {seenEntry.notes}
+                    </div>
+                  </div>
+                  )}
+
+                  <div className="flex mt-1 mb-3">
+                    <div className="">
+                      <EditNotesButton
+                        seenEntry={seenEntry}
+                      />
+                    </div>
+
+                    <div className="ml-4">
+                      <RemoveFromSeenHistoryButton
+                        mediaItem={mediaItem}
+                        episode={
+                          (seenEntry.episodeId &&
+                            episodesMap[seenEntry.episodeId]) ||
+                          undefined
+                        }
+                        seenId={seenEntry.id}
+                      />
+                    </div>
                   </div>
                 </li>
               ))}
