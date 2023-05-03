@@ -11,7 +11,6 @@ import { clearDatabase, runMigrations } from '../../../__utils__/utils';
 const user: User = {
   id: 1,
   name: 'admin',
-  slug: 'admin',
   admin: true,
   password: 'password',
   publicReviews: false,
@@ -20,7 +19,6 @@ const user: User = {
 const user2: User = {
   id: 2,
   name: 'user',
-  slug: 'user',
   admin: false,
   password: 'password',
   publicReviews: false,
@@ -33,7 +31,6 @@ const seenEpisodes: Seen[] = [
     mediaItemId: 1,
     userId: user.id,
     episodeId: 1,
-    type: 'seen',
   },
   {
     id: 2,
@@ -41,7 +38,6 @@ const seenEpisodes: Seen[] = [
     mediaItemId: 1,
     userId: user.id,
     episodeId: 2,
-    type: 'seen',
   },
   {
     id: 3,
@@ -49,7 +45,6 @@ const seenEpisodes: Seen[] = [
     mediaItemId: 1,
     userId: user.id,
     episodeId: 3,
-    type: 'seen',
   },
   {
     id: 4,
@@ -57,7 +52,6 @@ const seenEpisodes: Seen[] = [
     mediaItemId: 3,
     episodeId: null,
     userId: user.id,
-    type: 'seen',
   },
   {
     id: 5,
@@ -65,7 +59,6 @@ const seenEpisodes: Seen[] = [
     mediaItemId: 4,
     episodeId: 5,
     userId: user.id,
-    type: 'seen',
   },
   {
     id: 6,
@@ -73,7 +66,6 @@ const seenEpisodes: Seen[] = [
     mediaItemId: 5,
     episodeId: 7,
     userId: 2,
-    type: 'seen',
   },
   {
     id: 7,
@@ -81,7 +73,6 @@ const seenEpisodes: Seen[] = [
     mediaItemId: 5,
     episodeId: 8,
     userId: 2,
-    type: 'seen',
   },
 ];
 
@@ -92,7 +83,6 @@ const mediaItem: MediaItemBaseWithSeasons[] = [
     mediaType: 'tv',
     source: 'user',
     title: 'title',
-    slug: 'title',
     seasons: [
       {
         id: 1,
@@ -148,7 +138,6 @@ const mediaItem: MediaItemBaseWithSeasons[] = [
     mediaType: 'tv',
     source: 'user',
     title: 'title2',
-    slug: 'title2',
   },
   {
     id: 3,
@@ -156,7 +145,6 @@ const mediaItem: MediaItemBaseWithSeasons[] = [
     mediaType: 'movie',
     source: 'user',
     title: 'title3',
-    slug: 'title3',
   },
   {
     id: 4,
@@ -164,7 +152,6 @@ const mediaItem: MediaItemBaseWithSeasons[] = [
     mediaType: 'tv',
     source: 'user',
     title: 'title4',
-    slug: 'title4',
     seasons: [
       {
         id: 3,
@@ -201,7 +188,6 @@ const mediaItem: MediaItemBaseWithSeasons[] = [
     mediaType: 'tv',
     source: 'user',
     title: 'title5',
-    slug: 'title5',
     seasons: [
       {
         id: 4,

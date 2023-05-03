@@ -3,7 +3,7 @@ import { t, Trans } from '@lingui/macro';
 import { useConfiguration } from 'src/api/configuration';
 import { CheckboxWithTitleAndDescription } from 'src/components/Checkbox';
 import { SettingsSegment } from 'src/components/SettingsSegment';
-import { AudibleLang, ServerLang, TmdbLang } from 'mediatracker-api';
+import { AudibleCountryCode, ServerLang, TmdbLang } from 'mediatracker-api';
 
 export const SettingsConfigurationPage: FunctionComponent = () => {
   const { configuration, update, isLoading } = useConfiguration();
@@ -36,6 +36,7 @@ export const SettingsConfigurationPage: FunctionComponent = () => {
               <option value="en">English</option>
               <option value="es">Spanish</option>
               <option value="fr">French</option>
+              <option value="ko">Korean</option>
               <option value="pt">Portuguese</option>
             </select>
           </SettingsSegment>
@@ -46,7 +47,9 @@ export const SettingsConfigurationPage: FunctionComponent = () => {
             <select
               value={configuration.audibleLang?.toLowerCase() || 'us'}
               onChange={(e) =>
-                update({ audibleLang: e.currentTarget.value as AudibleLang })
+                update({
+                  audibleLang: e.currentTarget.value as AudibleCountryCode,
+                })
               }
             >
               <option value="au">Australia (English)</option>

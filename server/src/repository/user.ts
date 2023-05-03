@@ -4,7 +4,6 @@ import _ from 'lodash';
 import { Database } from 'src/dbconfig';
 import { User, userColumns, userNonSensitiveColumns } from 'src/entity/user';
 import { repository } from 'src/repository/repository';
-import { randomSlugId, toSlug } from 'src/slug';
 
 class UserRepository extends repository<User>({
   tableName: 'user',
@@ -92,26 +91,12 @@ class UserRepository extends repository<User>({
     return await Database.knex<User>(this.tableName).where(where).first();
   }
 
-  public async create(user: Omit<User, 'id' | 'slug'>) {
+  public async create(user: Omit<User, 'id'>) {
     user.password = await argon2.hash(user.password);
-    const slug = toSlug(user.name);
 
     const res = await Database.knex.transaction(async (trx) => {
       const [res] = await trx<User>('user').insert(
-        {
-          ..._.pick(user, this.columnNames),
-          slug: trx.raw(
-            `(CASE 
-                WHEN (
-                  ${trx<User>('user')
-                    .count()
-                    .where('slug', slug)
-                    .toQuery()}) = 0 
-                  THEN '${slug}' 
-                ELSE '${slug}-${randomSlugId()}' 
-              END)`
-          ),
-        },
+        _.pick(user, this.columnNames),
         'id'
       );
 
@@ -119,7 +104,6 @@ class UserRepository extends repository<User>({
 
       await trx('list').insert({
         name: 'Watchlist',
-        slug: 'watchlist',
         userId: res.id,
         privacy: 'private',
         allowComments: false,
@@ -129,7 +113,6 @@ class UserRepository extends repository<User>({
         isWatchlist: true,
         sortBy: 'recently-watched',
         sortOrder: 'desc',
-        rank: 0,
       });
 
       return res;

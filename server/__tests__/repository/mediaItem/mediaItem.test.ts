@@ -4,7 +4,6 @@ import {
   MediaItemBaseWithSeasons,
   MediaItemForProvider,
 } from 'src/entity/mediaItem';
-import { imageRepository } from 'src/repository/image';
 import { mediaItemRepository } from 'src/repository/mediaItem';
 import { clearDatabase, runMigrations } from '__tests__/__utils__/utils';
 
@@ -23,39 +22,20 @@ describe('mediaItemRepository', () => {
     });
     result.seasons = await mediaItemRepository.seasonsWithEpisodes(result);
 
-    expect(result).toEqual(mediaItem);
-
-    const poster = await imageRepository.findOne({
-      mediaItemId: mediaItem.id,
-      seasonId: null,
-      type: 'poster',
-    });
-
-    const backdrop = await imageRepository.findOne({
-      mediaItemId: mediaItem.id,
-      seasonId: null,
-      type: 'backdrop',
-    });
-
-    const seasonPoster = await imageRepository.findOne({
-      mediaItemId: mediaItem.id,
-      seasonId: 1,
-      type: 'poster',
-    });
-
-    expect(poster).toBeDefined();
-    expect(backdrop).toBeDefined();
-    expect(seasonPoster).toBeDefined();
+    expect(result.posterId).toBeDefined();
+    expect(result.backdropId).toBeDefined();
+    result.seasons.map((season) =>
+      expect(season.posterId).toBeDefined()
+    );
   });
 
   test('create without id', async () => {
     const mediaItem: MediaItemBaseWithSeasons = {
       title: 'mediaItem123',
-      slug: 'mediaitem123',
       mediaType: 'tv',
       source: 'user',
-      poster: 'poster',
-      backdrop: 'backdrop',
+      externalPosterUrl: 'poster',
+      externalBackdropUrl: 'backdrop',
     };
 
     const returnedMediaItem = await mediaItemRepository.create(mediaItem);
@@ -64,89 +44,42 @@ describe('mediaItemRepository', () => {
       id: returnedMediaItem.id,
     });
 
+    const season = await mediaItemRepository.seasonsWithEpisodes(
+      returnedMediaItem
+    );
+
     expect(result).toMatchObject(mediaItem);
-
-    const poster = await imageRepository.findOne({
-      mediaItemId: result.id,
-      seasonId: null,
-      type: 'poster',
-    });
-
-    const backdrop = await imageRepository.findOne({
-      mediaItemId: result.id,
-      seasonId: null,
-      type: 'backdrop',
-    });
-
-    const seasonPoster = await imageRepository.findOne({
-      mediaItemId: result.id,
-      seasonId: 1,
-      type: 'poster',
-    });
-
-    expect(poster).toBeDefined();
-    expect(backdrop).toBeDefined();
-    expect(seasonPoster).toBeUndefined();
+    expect(result.posterId).toBeDefined();
+    expect(result.backdropId).toBeDefined();
+    season.map((season) => expect(season.posterId).toBeDefined());
   });
 
   test('update - remove images', async () => {
-    await mediaItemRepository.update({
+    const result = await mediaItemRepository.update({
       ...mediaItem,
       seasons: mediaItem.seasons.map((season) => ({
         ...season,
-        poster: null,
+        externalPosterUrl: null,
       })),
-      poster: undefined,
-      backdrop: undefined,
+      externalPosterUrl: undefined,
+      externalBackdropUrl: undefined,
     });
 
-    const poster = await imageRepository.findOne({
-      mediaItemId: mediaItem.id,
-      seasonId: null,
-      type: 'poster',
-    });
+    expect(result.posterId).toBeNull();
+    expect(result.backdropId).toBeNull();
 
-    const backdrop = await imageRepository.findOne({
-      mediaItemId: mediaItem.id,
-      seasonId: null,
-      type: 'backdrop',
-    });
-
-    const seasonPoster = await imageRepository.findOne({
-      mediaItemId: mediaItem.id,
-      seasonId: 1,
-      type: 'poster',
-    });
-
-    expect(poster).toBeUndefined();
-    expect(backdrop).toBeUndefined();
-    expect(seasonPoster).toBeUndefined();
+    result.seasons.map((season) => expect(season.posterId).toBeNull());
   });
 
   test('update - add images', async () => {
-    await mediaItemRepository.update(mediaItem);
+    const result = await mediaItemRepository.update(mediaItem);
 
-    const poster = await imageRepository.findOne({
-      mediaItemId: mediaItem.id,
-      seasonId: null,
-      type: 'poster',
-    });
-
-    const backdrop = await imageRepository.findOne({
-      mediaItemId: mediaItem.id,
-      seasonId: null,
-      type: 'backdrop',
-    });
-
-    const seasonPoster = await imageRepository.findOne({
-      mediaItemId: mediaItem.id,
-      seasonId: 1,
-      type: 'poster',
-    });
-
-    expect(poster).toBeDefined();
-    expect(backdrop).toBeDefined();
-    expect(seasonPoster).toBeDefined();
+    expect(result).toMatchObject(mediaItem);
+    expect(result.posterId).toBeDefined();
+    expect(result.backdropId).toBeDefined();
+    result.seasons.map((season) =>
+      expect(season.posterId).toBeDefined()
+    );
   });
 
   test('update', async () => {
@@ -157,22 +90,16 @@ describe('mediaItemRepository', () => {
     });
     result.seasons = await mediaItemRepository.seasonsWithEpisodes(result);
 
-    expect(result).toEqual(updatedMediaItem);
-
-    const seasonPoster = await imageRepository.findOne({
-      mediaItemId: mediaItem.id,
-      seasonId: 4,
-      type: 'poster',
-    });
-
-    expect(seasonPoster).toBeDefined();
+    expect(result).toMatchObject(updatedMediaItem);
+    expect(result.seasons.at(0).posterId).toBeDefined();
+    expect(result.seasons.at(1).posterId).toBeDefined();
+    expect(result.seasons.at(3).posterId).toBeDefined();
   });
 
   test('seasonAndEpisodeNumber', async () => {
     const mediaItem: MediaItemBaseWithSeasons = {
       id: 123,
       title: 'title111',
-      slug: 'title111',
       source: 'user',
       mediaType: 'tv',
       seasons: [
@@ -277,8 +204,8 @@ describe('mediaItemRepository', () => {
         source: 'user',
         mediaType: 'tv',
         title: 'Item 1',
-        poster: 'poster',
-        backdrop: 'backdrop',
+        externalPosterUrl: 'poster',
+        externalBackdropUrl: 'backdrop',
       },
       {
         id: 77772,
@@ -304,6 +231,12 @@ describe('mediaItemRepository', () => {
         title: 'Item 1',
       },
       {
+        tmdbId: 1234567,
+        source: 'user',
+        mediaType: 'tv',
+        title: 'Item 1 duplicate',
+      },
+      {
         tmdbId: 9875321,
         source: 'user',
         mediaType: 'tv',
@@ -313,8 +246,8 @@ describe('mediaItemRepository', () => {
         imdbId: 'tt1234567',
         source: 'user',
         mediaType: 'tv',
-        poster: 'poster',
-        backdrop: 'backdrop',
+        externalPosterUrl: 'poster',
+        externalBackdropUrl: 'backdrop',
         title: 'Item 3',
       },
       {
@@ -337,91 +270,45 @@ describe('mediaItemRepository', () => {
         mediaType: 'tv',
         title: 'title123',
       },
+      {
+        tmdbId: 999,
+        source: 'tmdb',
+        mediaType: 'tv',
+        title: 'title123 duplicate',
+      },
     ];
 
     await mediaItemRepository.createMany(existingItems);
+
     const res = await mediaItemRepository.mergeSearchResultWithExistingItems(
       searchResult,
       'tv'
     );
 
-    const updatedMediaItem = await mediaItemRepository.findOne({
-      imdbId: 'tt876123',
-    });
-
     const insertedMediaItem = await mediaItemRepository.findOne({
       imdbId: 'tt1234567',
     });
 
-    const insertedPoster = await imageRepository.findOne({
-      mediaItemId: insertedMediaItem.id,
-      seasonId: null,
-      type: 'poster',
-    });
-
-    const insertedBackdrop = await imageRepository.findOne({
-      mediaItemId: insertedMediaItem.id,
-      seasonId: null,
-      type: 'backdrop',
-    });
-
-    const existingItemPoster = await imageRepository.findOne({
-      mediaItemId: 77771,
-      seasonId: null,
-      type: 'poster',
-    });
-
-    const existingItemBackdrop = await imageRepository.findOne({
-      mediaItemId: 77771,
-      seasonId: null,
-      type: 'backdrop',
-    });
-
-    expect(insertedPoster).toBeDefined();
-    expect(insertedBackdrop).toBeDefined();
+    expect(res[3].posterId).toBeDefined();
+    expect(res[3].backdropId).toBeDefined();
 
     const expected = [
-      {
-        ...searchResult[0],
-        id: 77771,
-        poster: `/img/${existingItemPoster.id}`,
-        backdrop: `/img/${existingItemBackdrop.id}`,
-      },
-      { ...searchResult[1], id: 77773 },
-      {
-        ...searchResult[2],
-        id: insertedMediaItem.id,
-        poster: `/img/${insertedPoster.id}`,
-        backdrop: `/img/${insertedBackdrop.id}`,
-      },
+      existingItems[0],
+      existingItems[0],
+      existingItems[2],
       {
         ...searchResult[3],
-        id: 77772,
+        id: insertedMediaItem.id,
       },
-      searchResult[4],
+      existingItems[1],
       searchResult[5],
+      searchResult[6],
+      searchResult[6],
     ];
 
-    expect(res.mergeWithSearchResult()).toMatchObject(expected);
-    expect(res.mergeWithSearchResult()).toMatchObject(expected);
+    expect(res).toMatchObject(expected);
 
-    expect(res.existingItems).toMatchObject([
-      {
-        ...searchResult[0],
-        id: 77771,
-        poster: `/img/${existingItemPoster.id}`,
-        backdrop: `/img/${existingItemBackdrop.id}`,
-      },
-      { ...searchResult[1], id: 77773 },
-      {
-        ...searchResult[3],
-        id: 77772,
-      },
-    ]);
-
-    expect(res.newItems[0].lastTimeUpdated).toBeDefined();
-    expect(updatedMediaItem).toMatchObject(searchResult[3]);
-    expect(insertedMediaItem).toMatchObject(searchResult[2]);
+    expect(insertedMediaItem).toMatchObject(searchResult[3]);
   });
 });
 
@@ -431,10 +318,9 @@ const mediaItem: MediaItemBaseWithSeasons = {
   mediaType: 'tv',
   source: 'user',
   title: 'title2',
-  slug: 'title2',
   audibleId: null,
   authors: null,
-  backdrop: 'backdrop',
+  externalBackdropUrl: 'backdrop',
   developer: null,
   genres: null,
   igdbId: null,
@@ -449,7 +335,7 @@ const mediaItem: MediaItemBaseWithSeasons = {
   originalTitle: null,
   overview: null,
   platform: null,
-  poster: 'poster',
+  externalPosterUrl: 'poster',
   releaseDate: null,
   runtime: null,
   status: null,
@@ -470,7 +356,7 @@ const mediaItem: MediaItemBaseWithSeasons = {
       title: 'Season 1',
       isSpecialSeason: false,
       description: null,
-      poster: 'poster',
+      externalPosterUrl: 'poster',
       releaseDate: null,
       tmdbId: null,
       traktId: null,
@@ -521,7 +407,8 @@ const mediaItem: MediaItemBaseWithSeasons = {
       tvShowId: 1,
       isSpecialSeason: false,
       description: null,
-      poster: null,
+      externalPosterUrl: null,
+      posterId: null,
       releaseDate: null,
       tmdbId: null,
       traktId: null,
@@ -555,7 +442,8 @@ const mediaItem: MediaItemBaseWithSeasons = {
       isSpecialSeason: false,
       description: null,
       episodes: undefined,
-      poster: null,
+      externalPosterUrl: null,
+      posterId: null,
       releaseDate: null,
       tmdbId: null,
       traktId: null,
@@ -569,10 +457,9 @@ const updatedMediaItem = {
   overview: 'new overview',
   lastTimeUpdated: new Date().getTime(),
   title: 'new title',
-  slug: 'new-title-2000',
   audibleId: 'audibleId',
   authors: ['author', 'author 2'],
-  backdrop: 'backdrop',
+  externalBackdropUrl: 'backdrop',
   developer: 'developer',
   genres: ['genre', 'genre2'],
   igdbId: 789,
@@ -585,7 +472,7 @@ const updatedMediaItem = {
   openlibraryId: 'openlibraryId',
   originalTitle: 'originalTitle',
   platform: ['platform', 'platform2'],
-  poster: 'poster',
+  externalPosterUrl: 'poster',
   releaseDate: '2000-08-12',
   runtime: 51,
   status: 'status',
@@ -652,7 +539,7 @@ const updatedMediaItem = {
           tvdbId: 5324,
         },
       ],
-      poster: 'poster',
+      externalPosterUrl: 'poster',
       releaseDate: null,
       tmdbId: null,
     },

@@ -33,10 +33,12 @@ abstract class TMDb extends MetadataProvider {
       source: this.name,
       mediaType: this.mediaType,
       title: null,
-      backdrop: response.backdrop_path
+      externalBackdropUrl: response.backdrop_path
         ? getPosterUrl(response.backdrop_path)
         : null,
-      poster: response.poster_path ? getPosterUrl(response.poster_path) : null,
+      externalPosterUrl: response.poster_path
+        ? getPosterUrl(response.poster_path)
+        : null,
       tmdbId: response.id,
       overview: response.overview || null,
       status: response.status || null,
@@ -112,7 +114,7 @@ export class TMDbMovie extends TMDb {
 
   private mapMovie(item: Partial<TMDbApi.MovieDetailsResponse>) {
     const movie = this.mapItem(item);
-    movie.imdbId = item.imdb_id;
+    movie.imdbId = item.imdb_id || undefined;
     movie.originalTitle = item.original_title;
     movie.releaseDate = item.release_date || null;
     movie.title = item.title;
@@ -172,9 +174,8 @@ export class TMDbTv extends TMDb {
         );
 
         season.tvdbId = res.data.external_ids?.tvdb_id;
-        season.episodes = res.data.episodes.map((item) =>
-          this.mapEpisode(item)
-        );
+        season.episodes =
+          res.data.episodes?.map((item) => this.mapEpisode(item)) || [];
         return season;
       })
     );
@@ -204,14 +205,82 @@ export class TMDbTv extends TMDb {
     };
   }
 
+  async findByTvdbId(tvdbId: number): Promise<MediaItemForProvider> {
+    const res = await axios.get(`https://api.themoviedb.org/3/find/${tvdbId}`, {
+      params: {
+        api_key: TMDB_API_KEY,
+        external_source: 'tvdb_id',
+        language: GlobalConfiguration.configuration.tmdbLang,
+      },
+    });
+
+    if (res.data.tv_results?.length === 0) {
+      return;
+    }
+
+    return {
+      ...this.mapTvShow(res.data.tv_results[0]),
+      tvdbId: tvdbId,
+      needsDetails: true,
+    };
+  }
+
   async findByTmdbId(tmdbId: number): Promise<MediaItemForProvider> {
     return this.details({ tmdbId: tmdbId });
   }
 
+  async findByEpisodeImdbId(episodeImdbId: string) {
+    const res = await axios.get(
+      `https://api.themoviedb.org/3/find/${episodeImdbId}`,
+      {
+        params: {
+          api_key: TMDB_API_KEY,
+          external_source: 'imdb_id',
+          language: GlobalConfiguration.configuration.tmdbLang,
+        },
+      }
+    );
+
+    if (res.data.tv_episode_results?.length === 0) {
+      return;
+    }
+
+    const episode = this.mapEpisode(res.data.tv_episode_results[0]);
+
+    return {
+      tvShowTmdbId: res.data.tv_episode_results[0].show_id as number,
+      episode: episode,
+    };
+  }
+
+  async findByEpisodeTvdbId(episodeTvdbId: number) {
+    const res = await axios.get(
+      `https://api.themoviedb.org/3/find/${episodeTvdbId}`,
+      {
+        params: {
+          api_key: TMDB_API_KEY,
+          external_source: 'tvdb_id',
+          language: GlobalConfiguration.configuration.tmdbLang,
+        },
+      }
+    );
+
+    if (res.data.tv_episode_results?.length === 0) {
+      return;
+    }
+
+    const episode = this.mapEpisode(res.data.tv_episode_results[0]);
+
+    return {
+      tvShowTmdbId: res.data.tv_episode_results[0].show_id as number,
+      episode: episode,
+    };
+  }
+
   private mapTvShow(item: Partial<TMDbApi.TvDetailsResponse>) {
     const tvShow = this.mapItem(item);
-    tvShow.imdbId = item.external_ids?.imdb_id;
-    tvShow.tvdbId = item.external_ids?.tvdb_id;
+    tvShow.imdbId = item.external_ids?.imdb_id || undefined;
+    tvShow.tvdbId = item.external_ids?.tvdb_id || undefined;
     tvShow.title = item.name;
     tvShow.originalTitle = item.original_name;
     tvShow.releaseDate = item.first_air_date || null;
@@ -227,7 +296,7 @@ export class TMDbTv extends TMDb {
         tmdbId: item.id,
         title: item.name,
         description: item.overview || null,
-        poster: item.poster_path ? getPosterUrl(item.poster_path) : null,
+        externalPosterUrl: item.poster_path ? getPosterUrl(item.poster_path) : null,
         seasonNumber: item.season_number,
         numberOfEpisodes: item.episode_count,
         releaseDate: item.air_date || null,

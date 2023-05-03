@@ -1,6 +1,5 @@
 import { Knex } from 'knex';
 import { Database } from 'src/dbconfig';
-import { Image } from 'src/entity/image';
 import {
   List,
   ListItem,
@@ -9,24 +8,22 @@ import {
   ListSortOrder,
 } from 'src/entity/list';
 import { MediaItemItemsResponse, MediaType } from 'src/entity/mediaItem';
+import { Progress } from 'src/entity/progress';
 import { Seen } from 'src/entity/seen';
 import { TvEpisode } from 'src/entity/tvepisode';
 import { TvSeason } from 'src/entity/tvseason';
 import { UserRating } from 'src/entity/userRating';
 import { repository } from 'src/repository/repository';
-import { randomSlugId, toSlug } from 'src/slug';
 
 export type ListDetailsResponse = Omit<List, 'userId'> & {
   totalRuntime: number;
   user: {
     id: number;
     username: string;
-    slug: string;
   };
 };
 
 export type ListItemsResponse = {
-  rank: number;
   id: number;
   listedAt: string;
   type: MediaType | 'season' | 'episode';
@@ -59,8 +56,6 @@ class ListRepository extends repository<List>({
     }
 
     const updatedAt = new Date().getTime();
-    const slug = toSlug(name);
-
     return await Database.knex.transaction(async (trx) => {
       const list = await trx<List>('list').where('id', id).first();
 
@@ -90,16 +85,6 @@ class ListRepository extends repository<List>({
           updatedAt: updatedAt,
           sortBy: sortBy,
           sortOrder: sortOrder,
-          // displayNumbers: args.displayNumbers || false,
-          // allowComments: args.allowComments || false,
-          slug: Database.knex.raw(
-            `(CASE WHEN (${Database.knex<List>('list')
-              .count()
-              .where('userId', userId)
-              .where('slug', slug)
-              .whereNot('id', id)
-              .toQuery()}) = 0  THEN '${slug}' ELSE '${slug}-${randomSlugId()}' END)`
-          ),
         })
         .where('id', id);
 
@@ -115,6 +100,7 @@ class ListRepository extends repository<List>({
     sortOrder?: ListSortOrder;
     userId: number;
     isWatchlist?: boolean;
+    traktId?: number;
   }): Promise<List> {
     const {
       userId,
@@ -124,6 +110,7 @@ class ListRepository extends repository<List>({
       sortBy,
       sortOrder,
       isWatchlist,
+      traktId,
     } = args;
 
     if (name.trim().length === 0) {
@@ -131,7 +118,6 @@ class ListRepository extends repository<List>({
     }
 
     const createdAt = new Date().getTime();
-    const slug = toSlug(name);
 
     const [res] = await Database.knex<List>('list').insert(
       {
@@ -144,19 +130,7 @@ class ListRepository extends repository<List>({
         createdAt: createdAt,
         updatedAt: createdAt,
         isWatchlist: isWatchlist || false,
-        rank: Database.knex.raw(
-          `(${Database.knex<List>('list')
-            .count()
-            .where('userId', args.userId)
-            .toQuery()})`
-        ),
-        slug: Database.knex.raw(
-          `(CASE WHEN (${Database.knex<List>('list')
-            .count()
-            .where('userId', args.userId)
-            .where('slug', slug)
-            .toQuery()}) = 0  THEN '${slug}' ELSE '${slug}-${randomSlugId()}' END)`
-        ),
+        traktId: traktId,
       },
       '*'
     );
@@ -165,6 +139,7 @@ class ListRepository extends repository<List>({
       ...res,
       displayNumbers: Boolean(res.displayNumbers),
       allowComments: Boolean(res.allowComments),
+      isWatchlist: Boolean(res.isWatchlist),
     };
   }
 
@@ -197,7 +172,7 @@ class ListRepository extends repository<List>({
     const { listId, userId } = args;
 
     const res = await Database.knex('list')
-      .select('list.*', 'user.name AS user.name', 'user.slug AS user.slug')
+      .select('list.*', 'user.name AS user.name')
       .where('list.id', listId)
       .where((qb) =>
         qb.where('list.userId', userId).orWhere('list.privacy', 'public')
@@ -275,16 +250,15 @@ class ListRepository extends repository<List>({
       displayNumbers: Boolean(res.displayNumbers),
       name: res.name,
       privacy: res.privacy,
-      slug: res.slug,
       totalRuntime: res.totalRuntime,
       updatedAt: res.updatedAt,
       description: res.description,
       sortBy: res.sortBy,
       sortOrder: res.sortOrder,
+      traktId: res.traktId,
       user: {
         id: res.userId,
         username: res['user.name'],
-        slug: res['user.slug'],
       },
     };
   }
@@ -325,10 +299,10 @@ class ListRepository extends repository<List>({
         'listItem.episodeId': 'listItem.episodeId',
         'listItem.id': 'listItem.id',
         'listItem.mediaItemId': 'listItem.mediaItemId',
-        'listItem.rank': 'listItem.rank',
         'listItem.seasonId': 'listItem.seasonId',
         'mediaItem.airedEpisodesCount': 'mediaItemAiredEpisodes.count',
-        'mediaItem.backdrop.id': 'mediaItemBackdrop.id',
+        'mediaItem.posterId': 'mediaItem.posterId',
+        'mediaItem.backdropId': 'mediaItem.backdropId',
         'mediaItem.firstUnwatchedEpisode.description':
           'mediaItemFirstUnwatchedEpisode.description',
         'mediaItem.firstUnwatchedEpisode.episodeNumber':
@@ -408,13 +382,11 @@ class ListRepository extends repository<List>({
         'mediaItem.mediaType': 'mediaItem.mediaType',
         'mediaItem.network': 'mediaItem.network',
         'mediaItem.overview': 'mediaItem.overview',
-        'mediaItem.poster.id': 'mediaItemPoster.id',
         'mediaItem.progress': 'mediaItemProgress.progress',
         'mediaItem.releaseDate': 'mediaItem.releaseDate',
         'mediaItem.runtime': 'mediaItem.runtime',
         'mediaItem.seenEpisodesCount':
           'mediaItemSeenEpisodes.seenEpisodesCount',
-        'mediaItem.slug': 'mediaItem.slug',
         'mediaItem.status': 'mediaItem.status',
         'mediaItem.source': 'mediaItem.source',
         'mediaItem.title': 'mediaItem.title',
@@ -533,7 +505,6 @@ class ListRepository extends repository<List>({
             .max('date', { as: 'lastSeenAt' })
             .from('seen')
             .where('userId', userId)
-            .where('type', 'seen')
             .groupBy('episodeId')
             .as('episodeLastSeen'),
         'episodeLastSeen.episodeId',
@@ -548,7 +519,6 @@ class ListRepository extends repository<List>({
             .from('seen')
             .leftJoin('episode', 'episode.id', 'seen.episodeId')
             .where('userId', userId)
-            .where('type', 'seen')
             .groupBy('episode_seasonId')
             .as('seasonLastSeen'),
         'seasonLastSeen.episode_seasonId',
@@ -562,7 +532,6 @@ class ListRepository extends repository<List>({
             .max('date', { as: 'lastSeenAt' })
             .from('seen')
             .where('userId', userId)
-            .where('type', 'seen')
             .groupBy('mediaItemId')
             .as('mediaItemLastSeen'),
         'mediaItemLastSeen.mediaItemId',
@@ -638,28 +607,6 @@ class ListRepository extends repository<List>({
         'seasonAiredEpisodes.seasonId',
         'listItem.seasonId'
       )
-      // MediaItem: posterId
-      .leftJoin<Image>(
-        (qb) =>
-          qb
-            .from('image')
-            .where('type', 'poster')
-            .whereNull('seasonId')
-            .as('mediaItemPoster'),
-        'mediaItemPoster.mediaItemId',
-        'listItem.mediaItemId'
-      )
-      // MediaItem: backdropId
-      .leftJoin<Image>(
-        (qb) =>
-          qb
-            .from('image')
-            .where('type', 'backdrop')
-            .whereNull('seasonId')
-            .as('mediaItemBackdrop'),
-        'mediaItemBackdrop.mediaItemId',
-        'listItem.mediaItemId'
-      )
       // MediaItem: user rating
       .leftJoin<UserRating>(
         (qb) =>
@@ -713,7 +660,6 @@ class ListRepository extends repository<List>({
               qb
                 .select('mediaItemId')
                 .from<Seen>('seen')
-                .where('type', 'seen')
                 .where('userId', userId)
                 .whereNotNull('episodeId')
                 .groupBy('mediaItemId', 'episodeId')
@@ -736,7 +682,6 @@ class ListRepository extends repository<List>({
               qb
                 .select('mediaItemId')
                 .from<Seen>('seen')
-                .where('type', 'seen')
                 .where('userId', userId)
                 .whereNotNull('episodeId')
                 .groupBy('mediaItemId', 'episodeId')
@@ -758,18 +703,16 @@ class ListRepository extends repository<List>({
             .min('seasonAndEpisodeNumber', {
               as: 'seasonAndEpisodeNumber',
             })
-            .leftJoin('seen', (qb) =>
-              qb
-                .on('seen.episodeId', 'episode.id')
-                .andOnVal('seen.type', 'seen')
+            .leftJoin(
+              (qb) => qb.from<Seen>('seen').where('userId', userId).as('seen'),
+              'seen.episodeId',
+              'episode.id'
             )
             .where('episode.isSpecialEpisode', false)
-            .andWhereNot('episode.releaseDate', '')
-            .andWhereNot('episode.releaseDate', null)
-            .andWhere('episode.releaseDate', '<=', currentDateString)
-            .andWhere((qb) => {
-              qb.where('seen.userId', '<>', userId).orWhereNull('seen.userId');
-            })
+            .whereNot('episode.releaseDate', '')
+            .whereNot('episode.releaseDate', null)
+            .where('episode.releaseDate', '<=', currentDateString)
+            .whereNull('seen.userId')
             .groupBy('tvShowId')
             .as('mediaItemFirstUnwatchedEpisodeHelper'),
         'mediaItemFirstUnwatchedEpisodeHelper.tvShowId',
@@ -797,18 +740,16 @@ class ListRepository extends repository<List>({
             .min('seasonAndEpisodeNumber', {
               as: 'seasonAndEpisodeNumber',
             })
-            .leftJoin('seen', (qb) =>
-              qb
-                .on('seen.episodeId', 'episode.id')
-                .andOnVal('seen.type', 'seen')
+            .leftJoin(
+              (qb) => qb.from<Seen>('seen').where('userId', userId).as('seen'),
+              'seen.episodeId',
+              'episode.id'
             )
             .where('episode.isSpecialEpisode', false)
-            .andWhereNot('episode.releaseDate', '')
-            .andWhereNot('episode.releaseDate', null)
-            .andWhere('episode.releaseDate', '<=', currentDateString)
-            .andWhere((qb) => {
-              qb.where('seen.userId', '<>', userId).orWhereNull('seen.userId');
-            })
+            .whereNot('episode.releaseDate', '')
+            .whereNot('episode.releaseDate', null)
+            .where('episode.releaseDate', '<=', currentDateString)
+            .whereNull('seen.userId')
             .groupBy('seasonId')
             .as('seasonFirstUnwatchedEpisodeHelper'),
         'seasonFirstUnwatchedEpisodeHelper.seasonId',
@@ -825,69 +766,26 @@ class ListRepository extends repository<List>({
             )
       )
       // MediaItem: progress
-      .leftJoin<Seen>(
+      .leftJoin<Progress>(
         (qb) =>
           qb
-            .from<Seen>('seen')
-            .select('mediaItemId')
-            .max('date', { as: 'progressDate' })
-            .whereNull('episodeId')
-            .where('type', 'progress')
+            .from<Progress>('progress')
             .where('userId', userId)
-            .groupBy('mediaItemId')
-            .as('mediaItemProgressHelper'),
-        'mediaItemProgressHelper.mediaItemId',
+            .where('episodeId', null)
+            .as('mediaItemProgress'),
+        'mediaItemProgress.mediaItemId',
         'listItem.mediaItemId'
       )
-      .leftJoin<Seen>(
-        (qb) =>
-          qb
-            .from<Seen>('seen')
-            .select('date')
-            .max('progress', { as: 'progress' })
-            .groupBy('date')
-            .where('type', 'progress')
-            .where('userId', userId)
-            .whereNot('progress', 1)
-            .as('mediaItemProgress'),
-        (qb) =>
-          qb
-            .on('mediaItemProgressHelper.mediaItemId', 'listItem.mediaItemId')
-            .andOn(
-              'mediaItemProgressHelper.progressDate',
-              'mediaItemProgress.date'
-            )
-      )
       // Episode: progress
-      .leftJoin<Seen>(
+      .leftJoin<Progress>(
         (qb) =>
           qb
-            .from<Seen>('seen')
-            .select('episodeId')
-            .max('date', { as: 'progressDate' })
+            .from<Progress>('progress')
+            .where('userId', userId)
             .whereNotNull('episodeId')
-            .where('type', 'progress')
-            .where('userId', userId)
-            .groupBy('episodeId')
-            .as('episodeProgressHelper'),
-        'episodeProgressHelper.episodeId',
-        'listItem.episodeId'
-      )
-      .leftJoin<Seen>(
-        (qb) =>
-          qb
-            .from<Seen>('seen')
-            .select('date')
-            .max('progress', { as: 'progress' })
-            .groupBy('date')
-            .where('type', 'progress')
-            .where('userId', userId)
-            .whereNot('progress', 1)
             .as('episodeProgress'),
-        (qb) =>
-          qb
-            .on('episodeProgressHelper.episodeId', 'listItem.episodeId')
-            .andOn('episodeProgressHelper.progressDate', 'episodeProgress.date')
+        'episodeProgress.episodeId',
+        'listItem.episodeId'
       )
       // MediaItem: last aired episode
       .leftJoin<TvEpisode>(
@@ -967,10 +865,9 @@ class ListRepository extends repository<List>({
               'mediaItemUpcomingEpisodeHelper.seasonAndEpisodeNumber'
             )
       )
-      .orderBy('listItem.rank', 'asc');
+      .orderBy('listItem.id', 'asc');
 
     return res.map((listItem) => ({
-      rank: Number(listItem['listItem.rank']),
       id: Number(listItem['listItem.id']),
       listedAt: new Date(listItem['listItem.addedAt']).toISOString(),
       type: listItem['listItem.seasonId']
@@ -980,8 +877,8 @@ class ListRepository extends repository<List>({
         : listItem['mediaItem.mediaType'],
       mediaItem: {
         airedEpisodesCount: listItem['mediaItem.airedEpisodesCount'],
-        backdrop: listItem['mediaItem.backdrop.id']
-          ? `/img/${listItem['mediaItem.backdrop.id']}`
+        backdrop: listItem['mediaItem.backdropId']
+          ? `/img/${listItem['mediaItem.backdropId']}`
           : undefined,
         genres: listItem['mediaItem.genres']?.split(',')?.sort(),
         id: listItem['listItem.mediaItemId'],
@@ -990,15 +887,14 @@ class ListRepository extends repository<List>({
         mediaType: listItem['mediaItem.mediaType'],
         network: listItem['mediaItem.network'],
         overview: listItem['mediaItem.overview'],
-        poster: listItem['mediaItem.poster.id']
-          ? `/img/${listItem['mediaItem.poster.id']}`
+        poster: listItem['mediaItem.posterId']
+          ? `/img/${listItem['mediaItem.posterId']}`
           : undefined,
-        posterSmall: listItem['mediaItem.poster.id']
-          ? `/img/${listItem['mediaItem.poster.id']}?size=small`
+        posterSmall: listItem['mediaItem.posterId']
+          ? `/img/${listItem['mediaItem.posterId']}?size=small`
           : undefined,
         releaseDate: listItem['mediaItem.releaseDate'],
         runtime: listItem['mediaItem.runtime'] || null,
-        slug: listItem['mediaItem.slug'],
         source: listItem['mediaItem.source'],
         progress: listItem['mediaItem.progress'],
         status: listItem['mediaItem.status']?.toLowerCase(),

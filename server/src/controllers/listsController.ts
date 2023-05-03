@@ -121,7 +121,7 @@ export const getUserLists = async (args: {
 
   const res = await qb;
 
-  return res.map((row) => ({
+  return res.map((row, index) => ({
     id: row.id,
     name: row.name,
     privacy: row.privacy,
@@ -130,9 +130,7 @@ export const getUserLists = async (args: {
     description: row.description,
     createdAt: row.createdAt,
     updatedAt: row.updatedAt,
-    slug: row.slug,
     itemsCount: row.itemsCount,
-    rank: Number(row.rank),
     allowComments: Boolean(row.allowComments),
     displayNumbers: Boolean(row.displayNumbers),
     isWatchlist: Boolean(row.isWatchlist),

@@ -23,7 +23,6 @@ const mediaItem: MediaItemBase = {
   source: 'user',
   status: 'status',
   title: 'title',
-  slug: 'title-2021',
   tmdbId: 4351,
   tmdbRating: 9.1,
   tvmazeId: 123845,
@@ -36,7 +35,6 @@ const mediaItem: MediaItemBase = {
 const user: User = {
   id: 1,
   name: 'user',
-  slug: 'user',
   password: 'password',
 };
 

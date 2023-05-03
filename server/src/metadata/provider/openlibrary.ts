@@ -36,7 +36,7 @@ export class OpenLibrary extends MetadataProvider {
         mediaType: this.mediaType,
         source: this.name,
         title: doc.title,
-        poster: doc.cover_i
+        externalPosterUrl: doc.cover_i
           ? `https://covers.openlibrary.org/b/id/${doc.cover_i}.jpg`
           : undefined,
         releaseDate: doc.first_publish_year?.toString(),
@@ -50,7 +50,7 @@ export class OpenLibrary extends MetadataProvider {
   async details(args: {
     openlibraryId: string;
     numberOfPages?: number;
-    poster?: string;
+    externalPosterUrl?: string;
   }): Promise<MediaItemForProvider> {
     const res = await axios.get<DetailsResponse>(
       `https://openlibrary.org${args.openlibraryId}.json`
@@ -64,15 +64,30 @@ export class OpenLibrary extends MetadataProvider {
         typeof res.data.description === 'string'
           ? res.data.description
           : res.data.description?.value,
-      releaseDate: res.data.first_publish_date,
-      poster:
+      releaseDate: parseDate(res.data?.first_publish_date),
+      externalPosterUrl:
         res.data.covers?.length > 0
           ? `https://covers.openlibrary.org/b/id/${res.data.covers[0]}.jpg`
-          : args.poster,
+          : args.externalPosterUrl,
       numberOfPages: args.numberOfPages,
     };
   }
 }
+
+const parseDate = (dateStr: string): string => {
+  if (dateStr?.length === 4 && !Number.isNaN(dateStr)) {
+    return dateStr;
+  }
+
+  const timestamp = Date.parse(dateStr);
+
+  if (!Number.isNaN(timestamp)) {
+    const date = new Date(timestamp);
+    return `${date.getFullYear()}-${date.getMonth()}-${date.getDate()}`;
+  }
+
+  return undefined;
+};
 
 interface Document {
   cover_i: number;

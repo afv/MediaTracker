@@ -70,6 +70,7 @@ import { ListController } from '../../controllers/listController';
 import { ListItemController } from '../../controllers/listItemController';
 import { ListsController } from '../../controllers/listsController';
 import { LogsController } from '../../controllers/logs';
+import { PlexController } from '../../controllers/plexController';
 import { ProgressController } from '../../controllers/progress';
 import { RatingController } from '../../controllers/rating';
 import { SearchController } from '../../controllers/search';
@@ -90,6 +91,7 @@ const _ListController = new ListController();
 const _ListItemController = new ListItemController();
 const _ListsController = new ListsController();
 const _LogsController = new LogsController();
+const _PlexController = new PlexController();
 const _ProgressController = new ProgressController();
 const _RatingController = new RatingController();
 const _SearchController = new SearchController();
@@ -110,8 +112,16 @@ router.get(
       $schema: 'http://json-schema.org/draft-07/schema#',
       type: 'object',
       properties: {
-        start: { type: ['string', 'null'] },
-        end: { type: ['string', 'null'] },
+        start: {
+          description: 'Date string in ISO 8601 format',
+          type: ['string', 'null'],
+          examples: ['2022-05-21'],
+        },
+        end: {
+          description: 'Date string in ISO 8601 format',
+          type: ['string', 'null'],
+          examples: ['2022-05-21T23:37:36+00:00'],
+        },
       },
     },
   }),
@@ -267,12 +277,12 @@ router.patch(
           ],
           type: 'string',
         },
-        AudibleLang: {
+        AudibleCountryCode: {
           enum: ['au', 'ca', 'de', 'es', 'fr', 'in', 'it', 'jp', 'uk', 'us'],
           type: 'string',
         },
         ServerLang: {
-          enum: ['da', 'de', 'en', 'es', 'fr', 'pt'],
+          enum: ['da', 'de', 'en', 'es', 'fr', 'ko', 'pt'],
           type: 'string',
         },
       },
@@ -283,7 +293,10 @@ router.patch(
           oneOf: [{ $ref: '#/definitions/TmdbLang' }, { type: 'null' }],
         },
         audibleLang: {
-          oneOf: [{ $ref: '#/definitions/AudibleLang' }, { type: 'null' }],
+          oneOf: [
+            { $ref: '#/definitions/AudibleCountryCode' },
+            { type: 'null' },
+          ],
         },
         serverLang: {
           oneOf: [{ $ref: '#/definitions/ServerLang' }, { type: 'null' }],
@@ -477,7 +490,6 @@ router.put(
           enum: [
             'my-rating',
             'next-airing',
-            'rank',
             'recently-added',
             'recently-aired',
             'recently-watched',
@@ -519,7 +531,6 @@ router.patch(
           enum: [
             'my-rating',
             'next-airing',
-            'rank',
             'recently-added',
             'recently-aired',
             'recently-watched',
@@ -668,6 +679,7 @@ router.get(
   }),
   _LogsController.add
 );
+router.post('/api/plex', validatorHandler({}), _PlexController.post);
 router.put(
   '/api/progress',
   validatorHandler({
@@ -678,14 +690,50 @@ router.put(
         mediaItemId: { type: 'number' },
         episodeId: { type: ['number', 'null'] },
         progress: { type: ['number', 'null'] },
-        date: { type: ['number', 'null'] },
+        date: { type: 'number' },
         duration: { type: ['number', 'null'] },
         action: { enum: ['paused', 'playing', null], type: 'string' },
+        device: { type: ['string', 'null'] },
       },
-      required: ['mediaItemId'],
+      required: ['date', 'mediaItemId'],
     },
   }),
   _ProgressController.add
+);
+router.put(
+  '/api/progress/by-external-id',
+  validatorHandler({
+    requestBodySchema: {
+      $schema: 'http://json-schema.org/draft-07/schema#',
+      definitions: {
+        MediaType: {
+          enum: ['audiobook', 'book', 'movie', 'tv', 'video_game'],
+          type: 'string',
+        },
+      },
+      type: 'object',
+      properties: {
+        mediaType: { $ref: '#/definitions/MediaType' },
+        id: {
+          type: 'object',
+          properties: {
+            imdbId: { type: ['string', 'null'] },
+            tmdbId: { type: ['number', 'null'] },
+            audibleId: { type: ['string', 'null'] },
+            igdbId: { type: ['number', 'null'] },
+          },
+        },
+        seasonNumber: { type: ['number', 'null'] },
+        episodeNumber: { type: ['number', 'null'] },
+        action: { enum: ['paused', 'playing', null], type: 'string' },
+        progress: { type: ['number', 'null'] },
+        duration: { type: ['number', 'null'] },
+        device: { type: ['string', 'null'] },
+      },
+      required: ['id', 'mediaType'],
+    },
+  }),
+  _ProgressController.addByExternalId
 );
 router.delete(
   '/api/progress/:progressId',
@@ -759,11 +807,42 @@ router.put(
           oneOf: [{ $ref: '#/definitions/LastSeenAt' }, { type: 'null' }],
         },
         date: { type: ['number', 'null'] },
+        duration: { type: ['number', 'null'] },
       },
       required: ['mediaItemId'],
     },
   }),
   _SeenController.add
+);
+router.put(
+  '/api/seen/by-external-id',
+  validatorHandler({
+    requestBodySchema: {
+      $schema: 'http://json-schema.org/draft-07/schema#',
+      definitions: {
+        MediaType: {
+          enum: ['audiobook', 'book', 'movie', 'tv', 'video_game'],
+          type: 'string',
+        },
+      },
+      type: 'object',
+      properties: {
+        mediaType: { $ref: '#/definitions/MediaType' },
+        id: {
+          type: 'object',
+          properties: {
+            imdbId: { type: ['string', 'null'] },
+            tmdbId: { type: ['number', 'null'] },
+          },
+        },
+        seasonNumber: { type: ['number', 'null'] },
+        episodeNumber: { type: ['number', 'null'] },
+        duration: { type: ['number', 'null'] },
+      },
+      required: ['id', 'mediaType'],
+    },
+  }),
+  _SeenController.addByExternalId
 );
 router.delete(
   '/api/seen/:seenId',
@@ -888,6 +967,18 @@ router.put(
             {
               type: 'object',
               properties: {
+                platformName: { type: 'string', enum: ['Discord'] },
+                credentials: {
+                  type: 'object',
+                  properties: { url: { type: 'string' } },
+                  required: ['url'],
+                },
+              },
+              required: ['credentials', 'platformName'],
+            },
+            {
+              type: 'object',
+              properties: {
                 platformName: { type: 'string', enum: ['Pushbullet'] },
                 credentials: {
                   type: 'object',
@@ -953,7 +1044,6 @@ router.put(
       type: 'object',
       properties: {
         name: { type: ['string', 'null'] },
-        slug: { type: ['string', 'null'] },
         publicReviews: { type: ['boolean', 'null'] },
         sendNotificationWhenStatusChanges: { type: ['boolean', 'null'] },
         sendNotificationWhenReleaseDateChanges: { type: ['boolean', 'null'] },
@@ -963,7 +1053,15 @@ router.put(
         sendNotificationForReleases: { type: ['boolean', 'null'] },
         sendNotificationForEpisodesReleases: { type: ['boolean', 'null'] },
         notificationPlatform: {
-          enum: ['Pushbullet', 'Pushover', 'Pushsafer', 'gotify', 'ntfy', null],
+          enum: [
+            'Discord',
+            'Pushbullet',
+            'Pushover',
+            'Pushsafer',
+            'gotify',
+            'ntfy',
+            null,
+          ],
           type: 'string',
         },
         hideOverviewForUnseenSeasons: { type: ['boolean', 'null'] },
@@ -1045,14 +1143,24 @@ router.post(
   _GoodreadsImportController.import
 );
 router.get(
+  '/api/import-trakttv/state',
+  validatorHandler({}),
+  _TraktTvImportController.state
+);
+router.get(
+  '/api/import-trakttv/state-stream',
+  validatorHandler({}),
+  _TraktTvImportController.stateStream
+);
+router.get(
   '/api/import-trakttv/device-token',
   validatorHandler({}),
   _TraktTvImportController.getUserCode
 );
 router.get(
-  '/api/import-trakttv/state',
+  '/api/import-trakttv/start-over',
   validatorHandler({}),
-  _TraktTvImportController.state
+  _TraktTvImportController.startOver
 );
 
 export { router as generatedRoutes };

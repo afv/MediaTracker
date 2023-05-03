@@ -1,11 +1,8 @@
-import { parseISO } from 'date-fns';
-
 import { UserRating } from 'src/entity/userRating';
 import { Seen } from 'src/entity/seen';
 import { TvEpisode } from 'src/entity/tvepisode';
 import { TvSeason } from 'src/entity/tvseason';
-import { AudibleLang } from 'src/entity/configuration';
-import { toSlug } from 'src/slug';
+import { AudibleCountryCode } from 'src/entity/configuration';
 import { List } from 'src/entity/list';
 
 export type MediaType = 'tv' | 'movie' | 'book' | 'video_game' | 'audiobook';
@@ -28,10 +25,11 @@ export type MediaItemBase = ExternalIds & {
   status?: string;
   platform?: string[];
   title: string;
-  slug?: string;
   originalTitle?: string;
-  poster?: string;
-  backdrop?: string;
+  externalPosterUrl?: string;
+  externalBackdropUrl?: string;
+  posterId?: string;
+  backdropId?: string;
   tmdbRating?: number;
   releaseDate?: string;
   overview?: string;
@@ -48,7 +46,7 @@ export type MediaItemBase = ExternalIds & {
   narrators?: string[];
   language?: string;
   numberOfPages?: number;
-  audibleCountryCode?: AudibleLang;
+  audibleCountryCode?: AudibleCountryCode;
   needsDetails?: boolean;
   lockedAt?: number;
 };
@@ -126,7 +124,6 @@ export type MediaItemItemsResponse = Omit<MediaItemBase, 'lockedAt'> & {
 };
 
 export const mediaItemColumns = <const>[
-  'backdrop',
   'developer',
   'genres',
   'id',
@@ -141,7 +138,6 @@ export const mediaItemColumns = <const>[
   'originalTitle',
   'overview',
   'platform',
-  'poster',
   'releaseDate',
   'tmdbRating',
   'runtime',
@@ -159,8 +155,11 @@ export const mediaItemColumns = <const>[
   'numberOfPages',
   'traktId',
   'audibleCountryCode',
-  'slug',
   'tvdbId',
+  'externalPosterUrl',
+  'externalBackdropUrl',
+  'posterId',
+  'backdropId',
 ];
 
 export const mediaItemPosterPath = (
@@ -187,14 +186,4 @@ export const seasonPosterPath = (
     seasonId: seasonId.toString(),
     size: size,
   })}`;
-};
-
-export const mediaItemSlug = (mediaItem: MediaItemBase) => {
-  if (mediaItem.releaseDate) {
-    return toSlug(
-      `${mediaItem.title}-${parseISO(mediaItem.releaseDate).getFullYear()}`
-    );
-  } else {
-    return toSlug(mediaItem.title);
-  }
 };

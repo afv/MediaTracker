@@ -71,11 +71,10 @@ describe('itemsToPossiblyUpdate', () => {
       mediaType: 'movie',
       source: 'user',
       title: 'UserMovie',
-      slug: 'usermovie',
-      poster: 'posterUrl',
-      backdrop: 'backdropUrl',
+      externalPosterUrl: 'posterUrl',
+      externalBackdropUrl: 'backdropUrl',
       releaseDate: '2001-04-12',
-      tmdbId: 123456,
+      tmdbId: 999,
       runtime: 124,
     };
 

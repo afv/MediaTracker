@@ -14,9 +14,8 @@ export class Data {
     mediaType: 'tv',
     source: 'tmdb',
     title: 'title',
-    slug: 'title',
-    poster: 'posterUrl',
-    backdrop: 'backdropUrl',
+    externalPosterUrl: 'posterUrl',
+    externalBackdropUrl: 'backdropUrl',
     releaseDate: '2002-05-07',
     runtime: 51,
     tmdbId: 754234,
@@ -75,9 +74,8 @@ export class Data {
     mediaType: 'movie',
     source: 'tmdb',
     title: 'movie',
-    slug: 'movie',
-    poster: 'posterUrl',
-    backdrop: 'backdropUrl',
+    externalPosterUrl: 'posterUrl',
+    externalBackdropUrl: 'backdropUrl',
     releaseDate: '2001-04-12',
     tmdbId: 123456,
     runtime: 124,
@@ -89,9 +87,8 @@ export class Data {
     mediaType: 'video_game',
     source: 'imdb',
     title: 'video_game',
-    slug: 'video_game',
-    poster: 'posterUrl',
-    backdrop: 'backdropUrl',
+    externalPosterUrl: 'posterUrl',
+    externalBackdropUrl: 'backdropUrl',
   };
 
   static book = {
@@ -100,15 +97,13 @@ export class Data {
     mediaType: 'book',
     source: 'openlibrary',
     title: 'book',
-    slug: 'book',
-    poster: 'posterUrl',
-    backdrop: 'backdropUrl',
+    externalPosterUrl: 'posterUrl',
+    externalBackdropUrl: 'backdropUrl',
   };
 
   static user = {
     id: 0,
     name: 'admin',
-    slug: 'admin',
     admin: true,
     password: 'password',
     publicReviews: false,
@@ -117,7 +112,6 @@ export class Data {
   static user2 = {
     id: 1,
     name: 'user',
-    slug: 'user',
     admin: false,
     password: 'password',
     publicReviews: false,
@@ -129,14 +123,12 @@ export class Data {
     updatedAt: new Date().getTime(),
     isWatchlist: true,
     name: 'Watchlist',
-    slug: 'Watchlist',
     privacy: 'private',
     userId: this.user.id,
     allowComments: false,
     displayNumbers: false,
-    sortBy: 'rank',
+    sortBy: 'recently-added',
     sortOrder: 'asc',
-    rank: 0,
   };
 
   static list: List = {
@@ -145,14 +137,12 @@ export class Data {
     updatedAt: new Date().getTime(),
     isWatchlist: false,
     name: 'list',
-    slug: 'list',
     privacy: 'private',
     userId: this.user.id,
     allowComments: false,
     displayNumbers: false,
-    sortBy: 'rank',
+    sortBy: 'recently-added',
     sortOrder: 'asc',
-    rank: 1,
   };
 
   static listUser2: List = {
@@ -189,7 +179,7 @@ export class InitialData {
     runtime: 51,
   };
 
-  static season: TvSeason = {
+  static season = {
     id: 1,
     description: 'description',
     releaseDate: '2001-02-20',
@@ -272,7 +262,7 @@ export class InitialData {
     sendDate: new Date().getTime(),
   };
 
-  static configuration: Configuration = {
+  static configuration = {
     id: 1,
     enableRegistration: true,
   };

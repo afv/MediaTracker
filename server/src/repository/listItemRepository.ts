@@ -9,6 +9,61 @@ class ListItemRepository extends repository<ListItem>({
   tableName: 'listItem',
   primaryColumnName: 'id',
 }) {
+  async addManyItems(args: {
+    userId: number;
+    listId: number;
+    listItems: { mediaItemId: number; seasonId?: number; episodeId?: number }[];
+  }) {
+    const { userId, listId, listItems } = args;
+
+    return await Database.knex.transaction(async (trx) => {
+      const list = await trx<List>('list')
+        .where({ id: listId, userId: userId })
+        .first();
+
+      if (!list || (list.userId !== userId && list.privacy === 'private')) {
+        return false;
+      }
+
+      const existingListItems = await trx<ListItem>('listItem').where({
+        listId: listId,
+      });
+
+      const serializeListItem = (listItem: {
+        mediaItemId: number;
+        seasonId?: number;
+        episodeId?: number;
+      }) => {
+        return JSON.stringify([
+          listItem.mediaItemId,
+          listItem.seasonId,
+          listItem.episodeId,
+        ]);
+      };
+      const existingListItemsSet = new Set(
+        existingListItems.map(serializeListItem)
+      );
+
+      const itemsToAdd = listItems
+        .filter(
+          (listItem) => !existingListItemsSet.has(serializeListItem(listItem))
+        )
+        .map((listItem) => ({
+          listId: listId,
+          addedAt: new Date().getTime(),
+          mediaItemId: listItem.mediaItemId,
+          seasonId: listItem.seasonId,
+          episodeId: listItem.episodeId,
+        }));
+
+      if (itemsToAdd.length > 0) {
+        await trx.batchInsert<ListItem>('listItem', itemsToAdd, 30);
+      }
+
+      return true;
+    });
+  }
+
   addItem = this.#addOrRemoveListItemFactory(async (trx, args) => {
     const { mediaItemId, seasonId, episodeId, listId } = args;
 
@@ -51,9 +106,6 @@ class ListItemRepository extends repository<ListItem>({
       seasonId: episodeId == undefined ? seasonId || null : null,
       episodeId: episodeId || null,
       addedAt: new Date().getTime(),
-      rank: trx.raw(
-        `(${trx<List>('listItem').count().where('listId', listId).toQuery()})`
-      ),
     });
 
     return true;
@@ -73,21 +125,6 @@ class ListItemRepository extends repository<ListItem>({
 
     if (listItem) {
       await trx('listItem').delete().where('id', listItem.id);
-
-      // update `listItem` set `rank` = `rank` - 1 where `rank` > `listItem`.`rank`
-      // will fail on SQLite when deleted item is not last by rowId due to
-      // UNIQUE constraint on listId and rank
-
-      const listItems = await trx('listItem')
-        .where('rank', '>', listItem.rank)
-        .where('listId', listId)
-        .orderBy('rank', 'asc');
-
-      for (const item of listItems) {
-        await trx('listItem')
-          .update('rank', item.rank - 1)
-          .where('id', item.id);
-      }
     }
 
     return true;

@@ -10,7 +10,6 @@ import { listItemRepository } from 'src/repository/listItemRepository';
 const user: User = {
   id: 1,
   name: 'admin',
-  slug: 'admin',
   admin: true,
   password: 'password',
   publicReviews: false,
@@ -19,7 +18,6 @@ const user: User = {
 const user2: User = {
   id: 2,
   name: 'user',
-  slug: 'user',
   admin: false,
   password: 'password',
   publicReviews: false,
@@ -55,7 +53,6 @@ const mediaItem: MediaItemBaseWithSeasons[] = [
     mediaType: 'tv',
     source: 'user',
     title: 'title',
-    slug: 'title',
     seasons: [
       {
         id: 1,
@@ -111,7 +108,6 @@ const mediaItem: MediaItemBaseWithSeasons[] = [
     mediaType: 'tv',
     source: 'user',
     title: 'title2',
-    slug: 'title2',
   },
   {
     id: 3,
@@ -119,7 +115,6 @@ const mediaItem: MediaItemBaseWithSeasons[] = [
     mediaType: 'movie',
     source: 'user',
     title: 'title3',
-    slug: 'title3',
   },
   {
     id: 4,
@@ -127,7 +122,6 @@ const mediaItem: MediaItemBaseWithSeasons[] = [
     mediaType: 'tv',
     source: 'user',
     title: 'title4',
-    slug: 'title4',
     seasons: [
       {
         id: 3,
@@ -164,7 +158,6 @@ const mediaItem: MediaItemBaseWithSeasons[] = [
     mediaType: 'tv',
     source: 'user',
     title: 'title5',
-    slug: 'title5',
     seasons: [
       {
         id: 4,

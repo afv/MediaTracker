@@ -2,15 +2,15 @@ export type Configuration = {
   id?: number;
   enableRegistration: boolean;
   tmdbLang?: TmdbLang;
-  audibleLang?: AudibleLang;
+  audibleLang?: AudibleCountryCode;
   serverLang?: ServerLang;
   igdbClientId?: string;
   igdbClientSecret?: string;
 };
 
-export type ServerLang = 'da' | 'de' | 'en' | 'es' | 'fr' | 'pt';
+export type ServerLang = 'da' | 'de' | 'en' | 'es' | 'fr' | 'ko' | 'pt';
 
-export type AudibleLang =
+export type AudibleCountryCode =
   | 'au'
   | 'ca'
   | 'de'
@@ -163,7 +163,7 @@ export type TmdbLang =
   | 'za'
   | 'zu';
 
-export const serverLang = ['da', 'de', 'en', 'es', 'fr', 'pt'];
+export const serverLang = ['da', 'de', 'en', 'es', 'fr', 'ko', 'pt'];
 export const audibleLang = [
   'au',
   'ca',

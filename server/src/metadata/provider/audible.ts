@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { AudibleLang as AudibleCountryCode } from 'src/entity/configuration';
+import { AudibleCountryCode } from 'src/entity/configuration';
 
 import { MediaItemForProvider, ExternalIds } from 'src/entity/mediaItem';
 import { MetadataProvider } from 'src/metadata/metadataProvider';
@@ -26,7 +26,7 @@ export class Audible extends MetadataProvider {
     return GlobalConfiguration.configuration.audibleLang?.toLocaleLowerCase() as AudibleCountryCode;
   }
 
-  private domain(countryCode: AudibleCountryCode) {
+  public domain(countryCode: AudibleCountryCode) {
     if (countryCode in this.languages) {
       return this.languages[countryCode];
     }
@@ -49,8 +49,7 @@ export class Audible extends MetadataProvider {
       {
         params: {
           title: query,
-          num_results: 25,
-          products_sort_by: 'Relevance',
+          num_results: 50,
           ...this.queryParams,
         },
       }
@@ -65,6 +64,29 @@ export class Audible extends MetadataProvider {
     throw new Error(`Error: ${res.status}`);
   }
 
+  async findByAudibleId(audibleId: string): Promise<MediaItemForProvider> {
+    const countryCode = GlobalConfiguration.configuration.audibleLang;
+
+    const res = await axios.get<AudibleResponse.DetailsResult>(
+      `https://api.audible.${this.domain(
+        countryCode
+      )}/1.0/catalog/products/${audibleId}`,
+      {
+        params: this.queryParams,
+      }
+    );
+
+    if (res.status !== 200) {
+      throw new Error(`Error: ${res.status}`);
+    }
+
+    if (res.data?.product?.title === undefined) {
+      return;
+    }
+
+    return this.mapResponse(res.data.product, countryCode);
+  }
+
   async details(
     arg: ExternalIds & { countryCode?: AudibleCountryCode }
   ): Promise<MediaItemForProvider> {
@@ -74,9 +96,9 @@ export class Audible extends MetadataProvider {
       arg.countryCode || GlobalConfiguration.configuration.audibleLang;
 
     const res = await axios.get<AudibleResponse.DetailsResult>(
-      `https://api.audible.${this.domain(countryCode)}/1.0/catalog/products/${
-        audibleId + 1
-      }`,
+      `https://api.audible.${this.domain(
+        countryCode
+      )}/1.0/catalog/products/${audibleId}`,
       {
         params: this.queryParams,
       }
@@ -110,7 +132,7 @@ export class Audible extends MetadataProvider {
       audibleId: item.asin,
       authors: item.authors?.map((author) => author.name),
       narrators: item.narrators?.map((narrator) => narrator.name),
-      poster: item.product_images?.[2400],
+      externalPosterUrl: item.product_images?.[2400],
       language: item.language,
       releaseDate: item.release_date,
       runtime: item.runtime_length_min,

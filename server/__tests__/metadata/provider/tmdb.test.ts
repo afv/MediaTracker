@@ -93,9 +93,10 @@ const movieDetailsResult = {
   source: 'tmdb',
   mediaType: 'movie',
   title: "Harry Potter and the Philosopher's Stone",
-  backdrop:
+  externalBackdropUrl:
     'https://image.tmdb.org/t/p/original/5jkE2SzR5uR2egEb1rRhF22JyWN.jpg',
-  poster: 'https://image.tmdb.org/t/p/original/wuMc08IPKEatf9rnMNXvIDxqP4W.jpg',
+  externalPosterUrl:
+    'https://image.tmdb.org/t/p/original/wuMc08IPKEatf9rnMNXvIDxqP4W.jpg',
   tmdbId: 671,
   overview:
     "Harry Potter has lived under the stairs at his aunt and uncle's house his whole life. But on his 11th birthday, he learns he's a powerful wizard—with a place waiting for him at the Hogwarts School of Witchcraft and Wizardry. As he learns to harness his newfound powers with the help of the school's kindly headmaster, Harry uncovers the truth about his parents' deaths—and about the villain who's to blame.",
@@ -115,9 +116,9 @@ const movieSearchResult = [
     source: 'tmdb',
     mediaType: 'movie',
     title: "Harry Potter and the Philosopher's Stone",
-    backdrop:
+    externalBackdropUrl:
       'https://image.tmdb.org/t/p/original/5jkE2SzR5uR2egEb1rRhF22JyWN.jpg',
-    poster:
+    externalPosterUrl:
       'https://image.tmdb.org/t/p/original/wuMc08IPKEatf9rnMNXvIDxqP4W.jpg',
     tmdbId: 671,
     overview:
@@ -136,9 +137,9 @@ const movieSearchResult = [
     source: 'tmdb',
     mediaType: 'movie',
     title: 'Harry Potter and the Half-Blood Prince',
-    backdrop:
+    externalBackdropUrl:
       'https://image.tmdb.org/t/p/original/urDWNffjwmNi5IQaezw9GwqkUXa.jpg',
-    poster:
+    externalPosterUrl:
       'https://image.tmdb.org/t/p/original/o2j49x3HYJC2VH689rYxmswtSgS.jpg',
     tmdbId: 767,
     overview:
@@ -157,9 +158,9 @@ const movieSearchResult = [
     source: 'tmdb',
     mediaType: 'movie',
     title: 'Harry Potter and the Goblet of Fire',
-    backdrop:
+    externalBackdropUrl:
       'https://image.tmdb.org/t/p/original/5rrGVmRUuCKVbqUu41XIWTXJmNA.jpg',
-    poster:
+    externalPosterUrl:
       'https://image.tmdb.org/t/p/original/fECBtHlr0RB3foNHDiCBXeg9Bv9.jpg',
     tmdbId: 674,
     overview:
@@ -178,9 +179,9 @@ const movieSearchResult = [
     source: 'tmdb',
     mediaType: 'movie',
     title: 'Harry Potter and the Chamber of Secrets',
-    backdrop:
+    externalBackdropUrl:
       'https://image.tmdb.org/t/p/original/1stUIsjawROZxjiCMtqqXqgfZWC.jpg',
-    poster:
+    externalPosterUrl:
       'https://image.tmdb.org/t/p/original/sdEOH0992YZ0QSxgXNIGLq1ToUi.jpg',
     tmdbId: 672,
     overview:
@@ -199,9 +200,9 @@ const movieSearchResult = [
     source: 'tmdb',
     mediaType: 'movie',
     title: 'Harry Potter and the Prisoner of Azkaban',
-    backdrop:
+    externalBackdropUrl:
       'https://image.tmdb.org/t/p/original/vbk5CfaAHOjQPSAcYm6AoRRz2Af.jpg',
-    poster:
+    externalPosterUrl:
       'https://image.tmdb.org/t/p/original/aWxwnYoe8p2d2fcxOqtvAtJ72Rw.jpg',
     tmdbId: 673,
     overview:
@@ -223,9 +224,9 @@ const tvSearchResult = [
     source: 'tmdb',
     mediaType: 'tv',
     title: 'Lost',
-    backdrop:
+    externalBackdropUrl:
       'https://image.tmdb.org/t/p/original/12NEw3eBUQxK9qdgtegZRsz4Yp8.jpg',
-    poster:
+    externalPosterUrl:
       'https://image.tmdb.org/t/p/original/og6S0aTZU6YUJAbqxeKjCa3kY1E.jpg',
     tmdbId: 4607,
     overview:
@@ -248,9 +249,9 @@ const tvSearchResult = [
     source: 'tmdb',
     mediaType: 'tv',
     title: "Dan Brown's The Lost Symbol",
-    backdrop:
+    externalBackdropUrl:
       'https://image.tmdb.org/t/p/original/hZ9MlxA80rLGh5OExoJEeIEBByD.jpg',
-    poster:
+    externalPosterUrl:
       'https://image.tmdb.org/t/p/original/rc99fLHeOH4QBROUzAyPeKCvt6T.jpg',
     tmdbId: 120452,
     overview:
@@ -273,9 +274,9 @@ const tvSearchResult = [
     source: 'tmdb',
     mediaType: 'tv',
     title: 'Lost Girl',
-    backdrop:
+    externalBackdropUrl:
       'https://image.tmdb.org/t/p/original/9jlwGGx9zTkEV5mnuyQXDTUMCw3.jpg',
-    poster:
+    externalPosterUrl:
       'https://image.tmdb.org/t/p/original/jE6sqorxIyVU55VhDbz7NbqxZlV.jpg',
     tmdbId: 33852,
     overview:
@@ -298,9 +299,9 @@ const tvSearchResult = [
     source: 'tmdb',
     mediaType: 'tv',
     title: 'Lost in Space',
-    backdrop:
+    externalBackdropUrl:
       'https://image.tmdb.org/t/p/original/nB8Z2lDOOSpZgTRLUVYSJ74RPof.jpg',
-    poster:
+    externalPosterUrl:
       'https://image.tmdb.org/t/p/original/y8NJnTXzb4rio9uvVYFVrXEMofU.jpg',
     tmdbId: 75758,
     overview:
@@ -323,9 +324,9 @@ const tvSearchResult = [
     source: 'tmdb',
     mediaType: 'tv',
     title: 'Lost in Space',
-    backdrop:
+    externalBackdropUrl:
       'https://image.tmdb.org/t/p/original/fyrAObqU9IBWTu6CwRx7fwA7pFV.jpg',
-    poster:
+    externalPosterUrl:
       'https://image.tmdb.org/t/p/original/dGhtCpYZutuso2P3GKWnQnqwhSi.jpg',
     tmdbId: 3051,
     overview:
@@ -350,9 +351,10 @@ const tvDetailsResult = {
   source: 'tmdb',
   mediaType: 'tv',
   title: 'Lost',
-  backdrop:
+  externalBackdropUrl:
     'https://image.tmdb.org/t/p/original/12NEw3eBUQxK9qdgtegZRsz4Yp8.jpg',
-  poster: 'https://image.tmdb.org/t/p/original/og6S0aTZU6YUJAbqxeKjCa3kY1E.jpg',
+  externalPosterUrl:
+    'https://image.tmdb.org/t/p/original/og6S0aTZU6YUJAbqxeKjCa3kY1E.jpg',
   tmdbId: 4607,
   overview:
     'Stripped of everything, the survivors of a horrific plane crash  must work together to stay alive. But the island holds many secrets.',
@@ -372,7 +374,7 @@ const tvDetailsResult = {
       tmdbId: 14047,
       title: 'Specials',
       description: null,
-      poster:
+      externalPosterUrl:
         'https://image.tmdb.org/t/p/original/u1hvfXTqebq6Na5zhzHiJYZT0YK.jpg',
       seasonNumber: 0,
       numberOfEpisodes: 33,
@@ -712,7 +714,7 @@ const tvDetailsResult = {
       title: 'Season 1',
       description:
         'Mysteries abound on the first season of LOST as the survivors of Oceanic Air flight 815 find themselves stranded on an unidentified island with little hope of rescue.',
-      poster:
+      externalPosterUrl:
         'https://image.tmdb.org/t/p/original/fc9f4ERC09U1GziCgDWilWWgjKx.jpg',
       seasonNumber: 1,
       numberOfEpisodes: 24,
@@ -967,7 +969,7 @@ const tvDetailsResult = {
       title: 'Season 2',
       description:
         'The second season of the American serial drama television series Lost commenced airing in the United States and Canada on September 21, 2005 and concluded on May 24, 2006. The second season continues the stories of a group of over forty people who have been stranded on a remote island in the south Pacific, after their airplane crashed forty-four days prior to the beginning of the season. The producers have stated that as the first season is about introducing the survivors, the second season is about a 1970s scientific Dharma Initiative research station which the survivors discovered on the island and refer to as "the hatch". The second season aired Wednesdays at 9:00 pm in the United States. In addition to the regular twenty-four episodes, three clip-shows recapped previous events on the show. "Destination Lost" aired before the premiere, "Lost: Revelation" aired before the tenth episode and "Lost: Reckoning" aired before the twentieth episode. The season was released on DVD as a seven disc boxed set under the title of Lost: The Complete Second Season – The Extended Experience on September 5, 2006 by Buena Vista Home Entertainment.',
-      poster:
+      externalPosterUrl:
         'https://image.tmdb.org/t/p/original/vGLddXoXJhKPsAWeDYbAsE4wW1z.jpg',
       seasonNumber: 2,
       numberOfEpisodes: 24,
@@ -1222,7 +1224,7 @@ const tvDetailsResult = {
       title: 'Season 3',
       description:
         'The third season of the American serial drama television series Lost commenced airing in the United States and Canada on October 4, 2006 and concluded on May 23, 2007. The third season continues the stories of a group of over 40 people who have been stranded on a remote island in the South Pacific, after their airplane crashed 68 days prior to the beginning of the season. In the Lost universe, the season takes place from November 28 to December 21, 2004. The producers have stated that as the first season is about introducing the survivors and the second season is about the hatch, the third season is about the Others, a group of mysterious island inhabitants.\n\nIn response to fan complaints about scheduling in the previous seasons, ABC decided to air the episodes without reruns, albeit in two separate blocks. In the United States, the first block consisted of six episodes aired on Wednesdays at 9:00 pm and after a twelve week break, the season continued with the remaining 16 episodes at 10:00 pm. In addition, three clip-shows recapped previous events on the show. "Lost: A Tale of Survival" aired a week before the season premiere, "Lost Survivor Guide" aired before the seventh episode and "Lost: The Answers" aired before the season finale Buena Vista Home Entertainment released the season under the title Lost: The Complete Third Season – The Unexplored Experience on December 11, 2007 in Region 1 on DVD and Blu-ray Disc.',
-      poster:
+      externalPosterUrl:
         'https://image.tmdb.org/t/p/original/zLnuh6DVyrz5iaNVO6KNKubtffo.jpg',
       seasonNumber: 3,
       numberOfEpisodes: 23,
@@ -1467,7 +1469,7 @@ const tvDetailsResult = {
       title: 'Season 4',
       description:
         'The fourth season of the American serial drama television series Lost commenced airing on the American Broadcasting Company Network in the United States, and on CTV in Canada on January 31, 2008 and concluded on May 29, 2008. The season continues the stories of a group of over 40 people who have been stranded on a remote island in the South Pacific, after their airplane crashed there more than 90 days prior to the beginning of the season. According to Lost\'s executive producers/writers/showrunners Damon Lindelof and Carlton Cuse, there are two main themes in fourth season: "the castaways\' relationship to the freighter folk" and "who gets off the island and the fact that they need to get back". Lost came under scrutiny from critics in its third season, but the fourth season was acclaimed for its flash-forwards, pace and new characters.\n\nThe season was originally planned to contain 16 episodes; eight were filmed before the start of the 2007–2008 Writers Guild of America strike. Following the strike\'s resolution, it was announced that only five more episodes would be produced to complete the season; however, the season finale\'s script was so long that network executives approved the production of a 14th episode as part of a three-hour season finale split over two nights. The fourth season aired Tuesdays at 9:00 pm from January 31 to March 20, 2008 and at 10:00 pm from April 24 to May 15, 2008. The two-hour finale aired at 9:00 pm on May 29, 2008. Buena Vista Home Entertainment released the season on DVD and Blu-ray Disc under the title Lost: The Complete Fourth Season – The Expanded Experience on December 9, 2008 in Region 1; however, it was released earlier—on October 20, 2008—in Region 2.',
-      poster:
+      externalPosterUrl:
         'https://image.tmdb.org/t/p/original/TOfSxtW76sWrPn3YSm5GooaR3Y.jpg',
       seasonNumber: 4,
       numberOfEpisodes: 14,
@@ -1622,7 +1624,7 @@ const tvDetailsResult = {
       title: 'Season 5',
       description:
         'The fifth season of the American serial drama television series Lost commenced airing on the ABC network in the United States and on A in Canada in January 2009, and concluded with a two-hour season finale on May 13, 2009. The season continues the stories of the survivors of the fictional crash of Oceanic Airlines Flight 815, after some of them are rescued and those still stranded seemingly disappear to an unknown location and time with the island that they inhabit.\n\nAccording to Lost\'s co-creator/executive producer/writer/show runner Damon Lindelof, the season "is about why [the people who have left the island] need to get back". Lost returned on January 21, 2009 on ABC with a three-hour premiere consisting of a clip-show and two back-to-back new episodes. The remainder of the season aired on Wednesdays at 9:00 pm EST. The season began in the UK and Ireland on January 25, 2009 on Sky1 and RTÉ Two, respectively. The season was released on DVD and Blu-ray Disc under the title Lost: The Complete Fifth Season – The Journey Back, Expanded Edition on December 8, 2009.',
-      poster:
+      externalPosterUrl:
         'https://image.tmdb.org/t/p/original/2OYKA6UIC56loPxgL4IMshg4mVr.jpg',
       seasonNumber: 5,
       numberOfEpisodes: 17,
@@ -1806,195 +1808,14 @@ const tvDetailsResult = {
       title: 'Season 6',
       description:
         'After Season 5’s explosive finish, everything is up in the air for the survivors of flight 815. No one knows what — or who — the future will hold. Will Juliet’s sacrifice to save her friends work? Can Kate choose, once and for all, between Jack and Sawyer? Will Sun and Jin be reunited? Is it too late to save Claire? Whatever awaits everyone on the island, one thing is for certain — the moment of truth has arrived.',
-      poster:
+      externalPosterUrl:
         'https://image.tmdb.org/t/p/original/xUb57GiEwg6pJpU4F3e01PKRVlc.jpg',
       seasonNumber: 6,
       numberOfEpisodes: 18,
       releaseDate: '2010-02-02',
       isSpecialSeason: false,
       tvdbId: null,
-      episodes: [
-        {
-          title: 'LA X (1)',
-          description:
-            "Two outcomes of the detonation of the hydrogen bomb are presented. Flight 815 lands safely at LAX, where Kate escapes from the marshal and Jack learns that his father's body was lost in transit.",
-          episodeNumber: 1,
-          seasonNumber: 6,
-          releaseDate: '2010-02-02',
-          isSpecialEpisode: false,
-          tmdbId: 334026,
-        },
-        {
-          title: 'LA X (2)',
-          description:
-            "The survivors return to the present day after Jacob's death; Juliet dies and Sayid is resurrected after being brought to the Others' temple. Also, the Man in Black, who is impersonating Locke, is revealed to be the Smoke Monster and kills several of Ilana's team from Flight 316.",
-          episodeNumber: 2,
-          seasonNumber: 6,
-          releaseDate: '2010-02-02',
-          isSpecialEpisode: false,
-          tmdbId: 334027,
-        },
-        {
-          title: 'What Kate Does',
-          description:
-            'When Sawyer escapes from the temple, Kate and Jin are sent to bring him back. Meanwhile, the Others determine Sayid is infected and attempt to poison him. In the flash sideways, Kate, still on the run, takes Claire to a hospital when she goes into labor.',
-          episodeNumber: 3,
-          seasonNumber: 6,
-          releaseDate: '2010-02-09',
-          isSpecialEpisode: false,
-          tmdbId: 334028,
-        },
-        {
-          title: 'The Substitute',
-          description:
-            'On the island, the Man in Black attempts to recruit Sawyer in his attempt to leave the island, while an impromptu funeral is held for the real Locke. In the flash sideways, Locke is fired from his job and becomes a substitute teacher.',
-          episodeNumber: 4,
-          seasonNumber: 6,
-          releaseDate: '2010-02-16',
-          isSpecialEpisode: false,
-          tmdbId: 334029,
-        },
-        {
-          title: 'Lighthouse',
-          description:
-            "On Jacob's orders, Hurley leads Jack to a lighthouse. Meanwhile, Claire questions an Other she has captured while tending to an injured Jin. In the flash sideways, Jack is a single father trying to bond with his son.",
-          episodeNumber: 5,
-          seasonNumber: 6,
-          releaseDate: '2010-02-23',
-          isSpecialEpisode: false,
-          tmdbId: 334030,
-        },
-        {
-          title: 'Sundown',
-          description:
-            'After recruiting Sayid to his cause, the Man in Black issues an ultimatum to the Others: either join him or die. Meanwhile, Kate is reunited with Claire. In the flash sideways, Sayid helps his brother, who is in debt to a loan shark.',
-          episodeNumber: 6,
-          seasonNumber: 6,
-          releaseDate: '2010-03-02',
-          isSpecialEpisode: false,
-          tmdbId: 334031,
-        },
-        {
-          title: 'Dr. Linus',
-          description:
-            "Ilana discovers Ben killed Jacob, so she plans to kill him. Meanwhile, Jack, Hurley and a suicidal Richard visit the Black Rock. In the flash sideways, Ben, a high school teacher, tries to blackmail the school's principal.",
-          episodeNumber: 7,
-          seasonNumber: 6,
-          releaseDate: '2010-03-09',
-          isSpecialEpisode: false,
-          tmdbId: 334032,
-        },
-        {
-          title: 'Recon',
-          description:
-            'The Man in Black sends Sawyer on a reconnaissance mission to Hydra Island, where he discovers that Charles Widmore has returned to the island with a team of scientists. In the flash sideways, Sawyer is a lonely cop who is still searching for the original Sawyer.',
-          episodeNumber: 8,
-          seasonNumber: 6,
-          releaseDate: '2010-03-16',
-          isSpecialEpisode: false,
-          tmdbId: 334033,
-        },
-        {
-          title: 'Ab Aeterno',
-          description:
-            "Richard Alpert's back story is shown: In 1867, he is brought to the island on the Black Rock as a slave. He makes a deal with Jacob to be his representative in exchange for immortality. In the present day, Hurley convinces him to help the candidates replace Jacob and stop the Man in Black from leaving the Island.",
-          episodeNumber: 9,
-          seasonNumber: 6,
-          releaseDate: '2010-03-23',
-          isSpecialEpisode: false,
-          tmdbId: 334034,
-        },
-        {
-          title: 'The Package',
-          description:
-            "After Jin is kidnapped and taken to Hydra Island by Widmore's team, the Man in Black confronts Widmore. On the main island, Sun loses her ability to speak English. In the flash sideways, Sun and Jin are abducted after failing to complete a transaction for Sun's father.",
-          episodeNumber: 10,
-          seasonNumber: 6,
-          releaseDate: '2010-03-30',
-          isSpecialEpisode: false,
-          tmdbId: 334035,
-        },
-        {
-          title: 'Happily Ever After',
-          description:
-            'On the island, Widmore subjects Desmond to a large amount of electromagnetic energy as an experiment. In the flash sideways, Desmond, with the aid of Charlie, starts to have visions of his life in the original timeline.',
-          episodeNumber: 11,
-          seasonNumber: 6,
-          releaseDate: '2010-04-06',
-          isSpecialEpisode: false,
-          tmdbId: 334036,
-        },
-        {
-          title: 'Everybody Loves Hugo',
-          description:
-            'In order to prevent more loss of life, Hurley leads the other survivors to speak with the Man in Black. In the flash sideways, Hurley meets Libby, while Desmond continues his mission to let the Oceanic 815 passengers know of their lives on the island.',
-          episodeNumber: 12,
-          seasonNumber: 6,
-          releaseDate: '2010-04-13',
-          isSpecialEpisode: false,
-          tmdbId: 334037,
-        },
-        {
-          title: 'The Last Recruit',
-          description:
-            "The survivors split into two groups; one led by Sawyer, the other by the Man in Black. Sawyer's group travels to Hydra Island, where they are captured by Widmore's crew after Sun and Jin are reunited. In the flash sideways, the passengers of Oceanic 815 continue to cross paths with each other.",
-          episodeNumber: 13,
-          seasonNumber: 6,
-          releaseDate: '2010-04-20',
-          isSpecialEpisode: false,
-          tmdbId: 334038,
-        },
-        {
-          title: 'The Candidate',
-          description:
-            "After the remaining survivors are reunited, Sawyer and Jack hatch a plan to divert the Man in Black's attention and leave the island without him on Widmore's submarine, but disastrous consequences await them. In the flash sideways, Jack investigates the cause of Locke's paralysis and offers treatment.",
-          episodeNumber: 14,
-          seasonNumber: 6,
-          releaseDate: '2010-05-04',
-          isSpecialEpisode: false,
-          tmdbId: 334039,
-        },
-        {
-          title: 'Across the Sea',
-          description:
-            "Jacob and the Man in Black are revealed to be twin brothers. They are raised by a mysterious woman who is charged with protecting the island. As revenge for the murder of their adoptive mother (who killed their real mother), Jacob throws his brother into the source of electromagnetism after being made the island's guardian, which transforms the Man in Black into the smoke monster.",
-          episodeNumber: 15,
-          seasonNumber: 6,
-          releaseDate: '2010-05-11',
-          isSpecialEpisode: false,
-          tmdbId: 334040,
-        },
-        {
-          title: 'What They Died For',
-          description:
-            "Ben finally takes his revenge on Widmore after accepting the Man in Black's request for assistance. Jacob explains the purpose of the candidates, and Jack volunteers to take his place. The search for Desmond reveals that he has been rescued and the Man in Black plans to use him to destroy the island. In the flash sideways, each person ends up on their way to a concert.",
-          episodeNumber: 16,
-          seasonNumber: 6,
-          releaseDate: '2010-05-18',
-          isSpecialEpisode: false,
-          tmdbId: 334041,
-        },
-        {
-          title: 'The End (1)',
-          description:
-            'For different reasons, Jack and the Man in Black both use Desmond to extinguish the light at the heart of the island. The island starts disintegrating, but The Man in Black is also made mortal. Still desperate to escape, The Man in Black fights Jack and mortally wounds him, but with help from Kate, Jack kills him. Realizing his destiny, Jack sacrifices himself to relight the heart of the island, so his friends can escape on the Ajira plane. Hurley takes Jack\'s place as protector of the island and makes Ben the new advisor. The flash sideways is revealed to be a type of limbo, or holding pattern, for the main characters, where they reside until accepting their life and death, and are then able to "let go" and "move on" together.',
-          episodeNumber: 17,
-          seasonNumber: 6,
-          releaseDate: '2010-05-23',
-          isSpecialEpisode: false,
-          tmdbId: 334042,
-        },
-        {
-          title: 'The End (2)',
-          description:
-            'For different reasons, Jack and the Man in Black both use Desmond to extinguish the light at the heart of the island. The island starts disintegrating, but The Man in Black is also made mortal. Still desperate to escape, The Man in Black fights Jack and mortally wounds him, but with help from Kate, Jack kills him. Realizing his destiny, Jack sacrifices himself to relight the heart of the island, so his friends can escape on the Ajira plane. Hurley takes Jack\'s place as protector of the island and makes Ben the new advisor. The flash sideways is revealed to be a type of limbo, or holding pattern, for the main characters, where they reside until accepting their life and death, and are then able to "let go" and "move on" together.',
-          episodeNumber: 18,
-          seasonNumber: 6,
-          releaseDate: '2010-05-23',
-          isSpecialEpisode: false,
-          tmdbId: 334043,
-        },
-      ],
+      episodes: [],
     },
   ],
   needsDetails: false,

@@ -10,7 +10,6 @@ import { clearDatabase, runMigrations } from '../../../__utils__/utils';
 const user: User = {
   id: 1,
   name: 'admin',
-  slug: 'admin',
   admin: true,
   password: 'password',
   publicReviews: false,
@@ -19,7 +18,6 @@ const user: User = {
 const user2: User = {
   id: 2,
   name: 'user',
-  slug: 'user',
   admin: false,
   password: 'password',
   publicReviews: false,
@@ -32,7 +30,6 @@ const seenEpisodes: Seen[] = [
     mediaItemId: 1,
     userId: user.id,
     episodeId: 1,
-    type: 'seen',
   },
   {
     id: 2,
@@ -40,7 +37,6 @@ const seenEpisodes: Seen[] = [
     mediaItemId: 1,
     userId: user.id,
     episodeId: 2,
-    type: 'seen',
   },
   {
     id: 3,
@@ -48,7 +44,6 @@ const seenEpisodes: Seen[] = [
     mediaItemId: 1,
     userId: user.id,
     episodeId: 3,
-    type: 'seen',
   },
   {
     id: 4,
@@ -56,7 +51,13 @@ const seenEpisodes: Seen[] = [
     mediaItemId: 1,
     userId: user2.id,
     episodeId: 4,
-    type: 'seen',
+  },
+  {
+    id: 5,
+    date: new Date().getTime(),
+    mediaItemId: 1,
+    userId: user2.id,
+    episodeId: 1,
   },
 ];
 
@@ -83,7 +84,6 @@ const mediaItem: MediaItemBaseWithSeasons = {
   mediaType: 'tv',
   source: 'user',
   title: 'title',
-  slug: 'title',
   seasons: [
     {
       id: 1,
@@ -179,7 +179,7 @@ describe('firstUnwatchedEpisode', () => {
     });
 
     expect(fetchedMediaItem.firstUnwatchedEpisode).toMatchObject({
-      id: 1,
+      id: 2,
     });
   });
 
@@ -205,7 +205,7 @@ describe('firstUnwatchedEpisode', () => {
     });
 
     expect(fetchedMediaItem.firstUnwatchedEpisode).toMatchObject({
-      id: 1,
+      id: 2,
     });
   });
 });

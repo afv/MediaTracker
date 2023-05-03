@@ -11,12 +11,10 @@ const mediaItem: MediaItemBase = {
   mediaType: 'tv',
   source: 'user',
   title: 'title',
-  slug: 'title',
 };
 
 const user: User = {
   id: 1,
-  slug: 'user',
   name: 'user',
   password: 'password',
 };

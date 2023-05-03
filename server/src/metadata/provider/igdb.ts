@@ -40,7 +40,7 @@ export class IGDB extends MetadataProvider {
         : null,
       title: searchResult.name,
       overview: searchResult.summary,
-      poster: searchResult.cover
+      externalPosterUrl: searchResult.cover
         ? getPosterUrl(searchResult.cover.image_id)
         : null,
       genres: searchResult.genres
@@ -73,7 +73,7 @@ export class IGDB extends MetadataProvider {
         websites.url; 
       where id = ${gameId} & version_parent = null;`
     )) as Game[];
-    if (res.length > 0) {
+    if (res?.length > 0) {
       return res[0];
     }
   }

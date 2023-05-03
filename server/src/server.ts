@@ -24,7 +24,11 @@ import { Database } from 'src/dbconfig';
 import { catchAndLogError, durationToMilliseconds } from 'src/utils';
 import { updateMetadata } from 'src/updateMetadata';
 import { sendNotifications } from 'src/sendNotifications';
-import { AudibleLang, ServerLang, TmdbLang } from 'src/entity/configuration';
+import {
+  AudibleCountryCode,
+  ServerLang,
+  TmdbLang,
+} from 'src/entity/configuration';
 
 type ServerConfig = {
   publicPath: string;
@@ -168,10 +172,10 @@ export class Server {
             process.once('SIGKILL ', onCloseHandler);
 
             resolve();
+            await catchAndLogError(sendNotifications);
 
             if (this.#config.production) {
               await catchAndLogError(updateMetadata);
-              await catchAndLogError(sendNotifications);
 
               setInterval(async () => {
                 await catchAndLogError(updateMetadata);
@@ -197,7 +201,7 @@ export class Server {
 type ApplicationConfig = {
   serverLang: ServerLang;
   tmdbLang: TmdbLang;
-  audibleLang: AudibleLang;
+  audibleLang: AudibleCountryCode;
   igdbClientId?: string;
   igdbClientSecret?: string;
   demo?: boolean;
@@ -281,7 +285,7 @@ export class Application {
 export const initialize = async (args: {
   serverLang: ServerLang;
   tmdbLang: TmdbLang;
-  audibleLang: AudibleLang;
+  audibleLang: AudibleCountryCode;
   igdbClientId?: string;
   igdbClientSecret?: string;
   demo?: boolean;
@@ -294,10 +298,8 @@ export const initialize = async (args: {
     igdbClientSecret,
     demo,
   } = args;
-
   Config.migrate();
   Config.validate();
-  setupI18n(serverLang);
   logger.init();
   Database.init();
   await Database.runMigrations();
@@ -307,14 +309,14 @@ export const initialize = async (args: {
   );
   logger.info(`Server time: ${new Date().toLocaleString()}`);
 
-  const configuration = await configurationRepository.findOne();
+  let configuration = await configurationRepository.get();
 
   if (!configuration) {
     await configurationRepository.create({
       enableRegistration: true,
-      serverLang: serverLang,
-      tmdbLang: tmdbLang,
-      audibleLang: audibleLang,
+      serverLang: serverLang || 'en',
+      tmdbLang: tmdbLang || 'en',
+      audibleLang: audibleLang || 'us',
       igdbClientId: igdbClientId,
       igdbClientSecret: igdbClientSecret,
     });
@@ -327,6 +329,9 @@ export const initialize = async (args: {
       igdbClientSecret: igdbClientSecret || configuration.igdbClientSecret,
     });
   }
+
+  configuration = await configurationRepository.get();
+  setupI18n(configuration.serverLang);
 
   if (demo) {
     const demoUser = await userRepository.findOne({ name: 'demo' });
@@ -405,9 +410,9 @@ export const createAndStartServer = async () => {
 
   try {
     const res = await initialize({
-      serverLang: Config.SERVER_LANG || 'en',
-      tmdbLang: Config.TMDB_LANG || 'en',
-      audibleLang: Config.AUDIBLE_LANG || 'us',
+      serverLang: Config.SERVER_LANG,
+      tmdbLang: Config.TMDB_LANG,
+      audibleLang: Config.AUDIBLE_LANG,
       igdbClientId: Config.IGDB_CLIENT_ID,
       igdbClientSecret: Config.IGDB_CLIENT_SECRET,
       demo: Config.DEMO,
@@ -425,7 +430,7 @@ export const createAndStartServer = async () => {
     await server.listen();
   } catch (error) {
     await server?.close();
-    console.log(chalk.red.bold(`error: ${error}`));
+    console.log(chalk.red.bold(error.stack || error));
     createAndStartErrorServer({
       hostname: Config.HOSTNAME,
       port: Config.PORT,
